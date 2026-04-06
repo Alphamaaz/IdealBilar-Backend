@@ -1,5 +1,5 @@
 # Sample Folder Structure
-backend/
+backend/ 
 ├── src/
 │   ├── modules/
 │   │   ├── user/
