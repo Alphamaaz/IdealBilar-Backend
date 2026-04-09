@@ -78,6 +78,6 @@ module.exports = {
   userRegisterationValidation,
   userLoginValidation,
   forgetPasswordValidation,
-  userResetPasswordValidation,
+//   userResetPasswordValidation,
   userResetPasswordValidation
 };
