@@ -1,8 +1,8 @@
 //External modules
 
 //Internal modules
-const userService = require("../services/user.service");
-const settingResponse = require("../utils/settingResponse");
+import * as userService from "../services/user.service.js";
+import settingResponse from "../utils/settingResponse.js";
 
 // User registration controller
 const userRegisterController = async (req, res) => {
@@ -117,8 +117,7 @@ const userResetPasswordController = async (req, res) => {
     return new Error(err.message);
   }
 };
-//Exports
-module.exports = {
+export {
   userRegisterController,
   userLoginController,
   userForgetPasswordController,

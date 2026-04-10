@@ -6,5 +6,4 @@ const settingResponse = (res, result) => {
 };
 
 
-// exports 
-module.exports = settingResponse;
+export default settingResponse;

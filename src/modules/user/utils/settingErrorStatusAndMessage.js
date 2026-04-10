@@ -8,4 +8,4 @@ const settingErrorStatusAndMessage = (error) => {
 
 // exports
 
-module.exports = settingErrorStatusAndMessage;
+export default settingErrorStatusAndMessage;

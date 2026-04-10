@@ -1,3 +1,2 @@
-const {userController} = require('../user/controllers/user.controller.js');
-const userRouter = require('./routes/user.routes.js')
-module.exports = {userController, userRouter};
+export * from "./controllers/user.controller.js";
+export { default as userRouter } from "./routes/user.routes.js";

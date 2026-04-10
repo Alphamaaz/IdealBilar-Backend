@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const userOTPVerifySchema = new mongoose.Schema({
   userId: {
@@ -16,4 +16,4 @@ const userOTPVerifySchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("UserOTPVerify", userOTPVerifySchema);
+export default mongoose.model("UserOTPVerify", userOTPVerifySchema);
