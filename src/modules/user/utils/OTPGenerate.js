@@ -1,9 +1,8 @@
 //External modules
-const crypto = require('crypto');
+import crypto from "crypto";
 
 const OTPGenerate = (length = 4) => {
- return crypto.randomInt(10**(length-1), 10**length).toString();
-}
+  return crypto.randomInt(10 ** (length - 1), 10 ** length).toString();
+};
 
-//exports 
-module.exports = OTPGenerate;
+export default OTPGenerate;

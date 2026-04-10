@@ -1,5 +1,5 @@
 //External modules
-const { z } = require("zod");
+import { z } from "zod";
 
 // user Registration schema
 const userRegisterationSchema = z
@@ -73,11 +73,9 @@ const userResetPasswordValidation = (passwordData) => {
   }
 };
 
-// exports
-module.exports = {
+export {
   userRegisterationValidation,
   userLoginValidation,
   forgetPasswordValidation,
-//   userResetPasswordValidation,
   userResetPasswordValidation
 };
