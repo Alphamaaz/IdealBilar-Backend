@@ -1,8 +1,5 @@
-// External modules
-
-
 // Internal modules
-import { contactUsDelete } from "../repositories/contactUsDelete.repository";
+import { contactUsDelete } from "../repositories/contactUsDelete.repository.js";
 const contactUsDeleteService = async (contactUsiD) => {
     try{
          const result = await contactUsDelete(contactUsiD);
