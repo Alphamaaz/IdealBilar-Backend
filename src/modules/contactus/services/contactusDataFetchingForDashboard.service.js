@@ -1,5 +1,3 @@
-// External modules
-
 // Internal modules
 import contactusDataForDashboard from "../repositories/contactusDataForDashboard.repository.js";
 const contactusData = async () => {
