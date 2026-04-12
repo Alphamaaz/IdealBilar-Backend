@@ -1,5 +1,6 @@
 // External modules
 import express from 'express'
+
 // Internal modules
 import  {contactusController} from '../controllers/contactus.controller.js';
 import { contactusDataFetchingController } from '../controllers/contactusDataFetchingForDasboard.controller.js';
@@ -13,7 +14,7 @@ Router.post('/contact-us',contactusController)
 Router.get('/fetching-contact-us-data', contactusDataFetchingController);
 
 // Deleting the contact us data
-Router.delete('/deleting-contact-us/:id' , contactUsDeleteController);
+Router.delete('/deleting-contact-us/:userId' , contactUsDeleteController);
 
 // exports
 export {Router}
