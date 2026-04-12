@@ -1,5 +1,3 @@
-// External modules
-
 // Internal modules
 
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
