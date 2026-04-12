@@ -1,5 +1,3 @@
-// External modules
-
 // Internal modules
 import { ContactUsModel } from "../models/contactus.model.js";
 
@@ -19,8 +17,6 @@ const contactusDataStoringFunction = async (contactUsData) => {
         throw err;
     }
 };
-
-
 
 //exports
 export {
