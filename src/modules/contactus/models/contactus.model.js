@@ -1,8 +1,7 @@
 // External modules
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 // constact schema
-
 const contactusSchema = new mongoose.Schema({
     firstName:{
         type: String,
@@ -30,7 +29,7 @@ const contactusSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        minLength: 20
+        minlength: 20
     }
 }, {
     timestamps: true
@@ -38,4 +37,4 @@ const contactusSchema = new mongoose.Schema({
 
 
 //exports
-module.exports = mongoose.model('ContactUs', contactusSchema);
+export const ContactUsModel = mongoose.model('ContactUsModel', contactusSchema);

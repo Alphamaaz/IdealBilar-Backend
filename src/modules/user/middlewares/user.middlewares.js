@@ -1,7 +1,7 @@
 //Internal modules
-const jwtVerify = require("../../../shared/utils/jwtVerify");
-const userService = require("../services/user.service");
-const settingResponse = require("../utils/settingResponse");
+import jwtVerify from "../../../shared/utils/jwtVerify.js";
+import * as userService from "../services/user.service.js";
+import settingResponse from "../../../shared/utils/settingResponse.js";
 
 // middleware for verifying the user jwt token
 const userMiddlewareForVerifyJwtToken = (req, res, next) => {
@@ -64,8 +64,7 @@ const OTPVerifyMiddleware = async (req, res, next) => {
   }
 };
 
-// exports
-module.exports = {
+export {
   userMiddlewareForVerifyJwtToken,
   authenticateUserForForgetPassword,
   OTPVerifyMiddleware

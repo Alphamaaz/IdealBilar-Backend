@@ -1,8 +1,8 @@
-const App = require("./src/app");
-const { default: connectDB } = require("./src/database/db");
+import { app } from "./src/app.js";
+import connectDB from "./src/database/db.js";
 
 
-App.listen(3000, () => {
+app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 

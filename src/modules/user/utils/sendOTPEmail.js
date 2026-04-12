@@ -1,23 +1,23 @@
 // External modules
-const nodemailer = require("nodemailer");
+import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
-require("dotenv").config();
+dotenv.config();
 
 // Create a transporter using your email service credentials
- const transporter = nodemailer.createTransport({
-    secure: true,
-    host: "smtp.gmail.com",
-    port: 465,
-      auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
-      },
-    });
+const transporter = nodemailer.createTransport({
+  secure: true,
+  host: "smtp.gmail.com",
+  port: 465,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
     
 // Function to send OTP email
 const sendOTPEmail = async (email, otp) => {
-    try {
-    // Define email options
+  try {
     const info = await transporter.sendMail({
       from: `"Idealbilar" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -39,4 +39,4 @@ const sendOTPEmail = async (email, otp) => {
   }
 };
 
-module.exports = sendOTPEmail;
+export default sendOTPEmail;
