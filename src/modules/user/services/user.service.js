@@ -1,26 +1,25 @@
 //External modules
 
 //Internal modules
-const {
+import {
   userRegisterationValidation,
   userLoginValidation,
   forgetPasswordValidation,
   userResetPasswordValidation,
-} = require("../validations/user.validation");
-const passwordHashGenerate = require("../../../shared/utils/passwordHashGenerate");
-const comparePassword = require("../../../shared/utils/comparePassword");
-const {
+} from "../validations/user.validation.js";
+import comparePassword from "../../../shared/utils/comparePassword.js";
+import passwordHashGenerate from "../../../shared/utils/passwordHashGenerate.js";
+import {
   createUser,
   getUserByEmail,
   userOTPSave,
   OTPVerify,
-  userResetPassword: updateUserPassword,
-} = require("../repositories/user.repository");
-const { issueToken } = require("../../../shared/utils/jwtTokenIssue");
-const settingErrorStatusAndMessage = require("../utils/settingErrorStatusAndMessage");
-const sendOTPEmail = require("../utils/sendOTPEmail");
-const OTPGenerate = require("../utils/OTPGenerate");
-const { create } = require("../models/user.model");
+  userResetPassword as updateUserPassword,
+} from "../repositories/user.repository.js";
+import { issueToken } from "../../../shared/utils/jwtTokenIssue.js";
+import OTPGenerate from "../utils/OTPGenerate.js";
+import sendOTPEmail from "../utils/sendOTPEmail.js";
+import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
 
 // User Registration service
 const userRegister = async (userData) => {
@@ -178,8 +177,7 @@ const userResetPassword = async (resetPasswordData) => {
   }
 };
 
-// exports
-module.exports = {
+export {
   userRegister,
   userLogin,
   userForgetPassword,

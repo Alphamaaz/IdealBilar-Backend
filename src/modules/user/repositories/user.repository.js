@@ -1,7 +1,7 @@
 //Internal modules
-const User = require("../models/user.model");
-const userOTPVerifyMdoel = require("../models/user.OTPVerify.model");
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import userOTPVerifyMdoel from "../models/user.OTPVerify.model.js";
+import User from "../models/user.model.js";
 // Create a new user
 const createUser = async (userData) => {
   try {
@@ -65,8 +65,7 @@ const userResetPassword = async (userId, newPassword) => {
   }
 };
 
-// exports
-module.exports = {
+export {
   createUser,
   getUserByEmail,
   userOTPSave,

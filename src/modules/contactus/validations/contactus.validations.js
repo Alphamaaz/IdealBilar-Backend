@@ -1,5 +1,5 @@
 // External modules
-const { z, email } = require('zod');
+import { z } from 'zod';
 
 // Contact Us validation Schema
 const contactusValidationSchema = z.object({
@@ -14,6 +14,10 @@ const contactusValidation = (contactusData) => {
     try{
       return contactusValidationSchema.safeParse(contactusData);
     }catch(err){
+        console.log("We are in the contactus validation function ", err);
+        
         throw err;
     }
 }
+
+export {contactusValidation}

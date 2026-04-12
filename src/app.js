@@ -1,25 +1,38 @@
 //External modules
-const express = require('express');
+import express from 'express';
+import dotenv from "dotenv";
+dotenv.config();
+
 //Internal modules
-const {userRouter} = require("./modules/user");
-const clientTestimonialRoutes = require('./modules/clientTestimonials');
-const RentACarRouter = require('./modules/rentACar');
-const contactusRouter = require('./modules/contactus');
+import { userRouter } from "./modules/user/index.js";
+import {Router as contactusRouter } from './modules/contactus/index.js'
+
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 // User endpoints/URL's
 app.use('/api',userRouter);
 
 // Client testimonial endpoints/URL's
-app.use('/api', clientTestimonialRoutes);
+// app.use('/api', clientTestimonialRoutes);
 
 //Rent a car endpoints/URL's
-app.use('/api',RentACarRouter);
+// app.use('/api',RentACarRouter);
 
 //Contact Us endpoints/URL's
-app.use('/api', contactusRouter);
+app.use('/api/v1',contactusRouter);
 
- module.exports = app;
+// User URL's
+app.use('/api/v1',userRouter)
+app.get('/api/v1/health', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    success: true,
+    message: 'Server is healthy',
+  });
+});
+ 
+export { app };
+export default app;
