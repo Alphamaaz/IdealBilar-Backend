@@ -1,5 +1,3 @@
-// External modules
-
 // Internal modules
 import contactusData from "../services/contactusDataFetchingForDashboard.service.js";
 const contactusDataFetchingController = async (req,res) => {
@@ -23,7 +21,6 @@ const contactusDataFetchingController = async (req,res) => {
 }
 
 // export 
-
 export {
     contactusDataFetchingController
 }
