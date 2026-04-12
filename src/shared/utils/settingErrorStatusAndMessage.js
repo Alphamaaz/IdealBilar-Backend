@@ -1,3 +1,5 @@
+//This funtion is only for validation error. If the validation if faild then this would be work proper
+
 const settingErrorStatusAndMessage = (error) => {
   console.log("We are in the setting Error status and message ", error);
   
@@ -9,5 +11,4 @@ const settingErrorStatusAndMessage = (error) => {
 };
 
 // exports
-
 export default settingErrorStatusAndMessage;
