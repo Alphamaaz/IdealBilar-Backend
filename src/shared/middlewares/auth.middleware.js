@@ -1,4 +1,5 @@
 // middleware for verifying the user jwt token
+import jwtVerify from '../../shared/middlewares/auth.middleware.js'
 const middlewareForVerifyJwtToken = (req, res, next) => {
   try {
     const token = req.headers.token;
