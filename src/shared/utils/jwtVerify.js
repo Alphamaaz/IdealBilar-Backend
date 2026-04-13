@@ -14,4 +14,5 @@ const jwtVerify = (token) => {
   }
 };
 
+//export
 export default jwtVerify;
