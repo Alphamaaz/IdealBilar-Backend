@@ -22,6 +22,16 @@ const getUserByEmail = async (email) => {
   }
 };
 
+// Get user by id
+const getUserById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    return user;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 // save OTP to user
 const userOTPSave = async (userId, otp) => {
   try {
@@ -68,6 +78,7 @@ const userResetPassword = async (userId, newPassword) => {
 export {
   createUser,
   getUserByEmail,
+  getUserById,
   userOTPSave,
   OTPVerify,
   userResetPassword,

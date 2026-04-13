@@ -8,6 +8,7 @@ const userRegisterationSchema = z
     email: z.string().email(),
     password: z.string().min(6),
     confirmPassword: z.string().min(6),
+    role: z.enum(["user", "admin"]).default("user").optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password don't match",
