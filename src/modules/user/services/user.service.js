@@ -12,6 +12,7 @@ import passwordHashGenerate from "../../../shared/utils/passwordHashGenerate.js"
 import {
   createUser,
   getUserByEmail,
+  getUserById as findUserById,
   userOTPSave,
   OTPVerify,
   userResetPassword as updateUserPassword,
@@ -111,6 +112,15 @@ const userData = async (email) => {
   }
 };
 
+const getUserById = async (userId) => {
+  try {
+    const user = await findUserById(userId);
+    return user;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 // forget passwrod service
 const userForgetPassword = async (userDataForForgetPassword) => {
   try {
@@ -182,6 +192,7 @@ export {
   userLogin,
   userForgetPassword,
   userData,
+  getUserById,
   userOTPVerify,
   userResetPassword,
 };
