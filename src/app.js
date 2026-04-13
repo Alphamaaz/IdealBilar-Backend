@@ -5,6 +5,7 @@ dotenv.config();
 
 //Internal modules
 import { userRouter } from "./modules/user/index.js";
+import { carRentalRouter } from './modules/rentalCar/index.js';
 import {Router as contactusRouter } from './modules/contactus/index.js'
 import rentACarRouter from './modules/rentACar/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
@@ -26,6 +27,8 @@ app.use('/api/v1',rentACarRouter);
 app.use('/api/v1',contactusRouter);
 
 // User URL's
+app.use('/api/v1',userRouter);
+app.use('/api/v1',carRentalRouter);
 app.use('/api/v1',userRouter)
 
 // Buy a car endpoints/URL's
