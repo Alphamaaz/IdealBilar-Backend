@@ -2,7 +2,7 @@
 
 //Internal modules
 import * as userService from "../services/user.service.js";
-import settingResponse from "../utils/settingResponse.js";
+import settingResponse from "../../../shared/utils/settingResponse.js";
 
 // User registration controller
 const userRegisterController = async (req, res) => {

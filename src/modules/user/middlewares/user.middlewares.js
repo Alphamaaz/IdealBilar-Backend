@@ -1,7 +1,7 @@
 //Internal modules
 import jwtVerify from "../../../shared/utils/jwtVerify.js";
 import * as userService from "../services/user.service.js";
-import settingResponse from "../utils/settingResponse.js";
+import settingResponse from "../../../shared/utils/settingResponse.js";
 
 // middleware for verifying the user jwt token
 const userMiddlewareForVerifyJwtToken = (req, res, next) => {

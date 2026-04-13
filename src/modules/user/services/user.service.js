@@ -19,7 +19,7 @@ import {
 import { issueToken } from "../../../shared/utils/jwtTokenIssue.js";
 import OTPGenerate from "../utils/OTPGenerate.js";
 import sendOTPEmail from "../utils/sendOTPEmail.js";
-import settingErrorStatusAndMessage from "../utils/settingErrorStatusAndMessage.js";
+import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
 
 // User Registration service
 const userRegister = async (userData) => {
