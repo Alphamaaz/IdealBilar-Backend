@@ -6,7 +6,8 @@ dotenv.config();
 //Internal modules
 import { userRouter } from "./modules/user/index.js";
 import {Router as contactusRouter } from './modules/contactus/index.js'
-
+import rentACarRouter from './modules/rentACar/index.js'
+import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 
 const app = express();
 
@@ -19,13 +20,18 @@ app.use('/api',userRouter);
 // app.use('/api', clientTestimonialRoutes);
 
 //Rent a car endpoints/URL's
-// app.use('/api',RentACarRouter);
+app.use('/api/v1',rentACarRouter);
 
 //Contact Us endpoints/URL's
 app.use('/api/v1',contactusRouter);
 
 // User URL's
 app.use('/api/v1',userRouter)
+
+// Buy a car endpoints/URL's
+app.use('/api/v1',buyACarhandler);
+
+
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
     status: 'success',

@@ -1,5 +1,7 @@
-//Internal modules
+//External modules
 import mongoose from "mongoose";
+
+//Internal modules
 import userOTPVerifyMdoel from "../models/user.OTPVerify.model.js";
 import User from "../models/user.model.js";
 // Create a new user
