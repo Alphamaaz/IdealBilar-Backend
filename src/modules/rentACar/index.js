@@ -1,3 +1,5 @@
-const RentACarRouter = require('./routes/rentACar.routes');
+// Internal modules
+import rentACarRouter from './routes/rentACar.routes.js'
 
-module.exports = RentACarRouter 
+// exports
+export default rentACarRouter;

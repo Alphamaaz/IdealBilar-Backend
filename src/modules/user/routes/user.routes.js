@@ -7,10 +7,11 @@ import {
   userResetPasswordController as userResetPasswordHandler
 } from "../controllers/user.controller.js";
 import {
-  userMiddlewareForVerifyJwtToken,
   authenticateUserForForgetPassword,
   OTPVerifyMiddleware,
 } from "../middlewares/user.middlewares.js";
+
+import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 
 const Router = express.Router();
 
@@ -23,7 +24,7 @@ Router.post("/user-signin", userLoginHandler);
 // user forget password endpoint
 Router.post(
   "/forget-password",
-  userMiddlewareForVerifyJwtToken,
+  middlewareForVerifyJwtToken,
   authenticateUserForForgetPassword,
   userForgetPasswordHandler,
 );
@@ -31,14 +32,14 @@ Router.post(
 // user reset password endpoint
 Router.post(
   "/reset-password",
-    userMiddlewareForVerifyJwtToken,
+    middlewareForVerifyJwtToken,
     userResetPasswordHandler
 );
 
 // user OTP verify endpoint
 Router.post(
   "/otp-verify",
-  userMiddlewareForVerifyJwtToken,
+  middlewareForVerifyJwtToken,
   OTPVerifyMiddleware,
   OTPVarifyHandler,
 );
