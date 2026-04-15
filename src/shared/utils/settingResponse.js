@@ -1,5 +1,5 @@
 const settingResponse = (res, result) => {
-  console.log("We are in the settingResponse function ", result);
+  console.log("We are in the settingResponse function ", result.status);
   
   return res.status(result.status).json({
     success: false,

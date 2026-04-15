@@ -1,6 +1,6 @@
 // External modules
 
-import { rentACarDataDeleteService } from "../services/rentACarDataDelete.service.js";
+import { rentACarDataDeleteService } from "../services/rentACarDataDeleteInquiry.service.js";
 
 //Internal modules
 
