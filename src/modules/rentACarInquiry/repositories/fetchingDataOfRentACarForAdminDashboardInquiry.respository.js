@@ -1,10 +1,13 @@
 // External modules
 
+import RentACarBooking from "../models/rentACarBookingInquery.model.js";
+
 // Internal modules
 
 const rentACarDataForAdminDashboard = async () => {
     try{
-       console.log("We are in the rent a car data repository");
+       const result = await RentACarBooking.find();
+       return result;
     }catch(err){
         throw err;
     }
