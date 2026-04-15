@@ -4,6 +4,9 @@ import mongoose from "mongoose";
 //Internal modules
 import userOTPVerifyMdoel from "../models/user.OTPVerify.model.js";
 import User from "../models/user.model.js";
+
+const OTP_EXPIRE_WINDOW_MS = 5 * 60 * 1000;
+
 // Create a new user
 const createUser = async (userData) => {
   try {
@@ -15,9 +18,15 @@ const createUser = async (userData) => {
 };
 
 // Get user by email
-const getUserByEmail = async (email) => {
+const getUserByEmail = async (email, includePassword = false) => {
   try {
-    const user = await User.findOne({ email });
+    let query = User.findOne({ email });
+
+    if (includePassword) {
+      query = query.select("+password");
+    }
+
+    const user = await query;
     return user;
   } catch (err) {
     throw new Error(err.message);
@@ -35,12 +44,20 @@ const getUserById = async (userId) => {
 };
 
 // save OTP to user
-const userOTPSave = async (userId, otp) => {
+const saveUserOTP = async (userId, otp, purpose) => {
   try {
     const user = await userOTPVerifyMdoel.findOneAndUpdate(
-      { userId: new mongoose.Types.ObjectId(userId) },
-      { otp, expireAt: Date.now() + 5 * 60 * 1000 },
-      { returnDocument: "after", upsert: true },
+      { userId: new mongoose.Types.ObjectId(userId), purpose },
+      {
+        otp,
+        purpose,
+        expireAt: new Date(Date.now() + OTP_EXPIRE_WINDOW_MS),
+      },
+      {
+        returnDocument: "after",
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
     );
     return user;
   } catch (err) {
@@ -48,16 +65,40 @@ const userOTPSave = async (userId, otp) => {
   }
 };
 
-// OTPVerify
-const OTPVerify = async (userId, otp) => {
+const findValidUserOTP = async (userId, otp, purpose) => {
   try {
     const user = await userOTPVerifyMdoel.findOne({
       userId: new mongoose.Types.ObjectId(userId),
       otp,
+      purpose,
+      expireAt: { $gt: new Date() },
     });
     return user;
   } catch (err) {
-    console.log("We are in the OTPVerify repository");
+    throw new Error(err.message);
+  }
+};
+
+const deleteUserOTP = async (userId, purpose) => {
+  try {
+    await userOTPVerifyMdoel.findOneAndDelete({
+      userId: new mongoose.Types.ObjectId(userId),
+      purpose,
+    });
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const markUserAsVerified = async (userId) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isVerified: true },
+      { returnDocument: "after" },
+    );
+    return user;
+  } catch (err) {
     throw new Error(err.message);
   }
 };
@@ -81,7 +122,9 @@ export {
   createUser,
   getUserByEmail,
   getUserById,
-  userOTPSave,
-  OTPVerify,
+  saveUserOTP,
+  findValidUserOTP,
+  deleteUserOTP,
+  markUserAsVerified,
   userResetPassword,
 };

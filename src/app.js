@@ -1,6 +1,7 @@
 //External modules
 import express from 'express';
 import dotenv from "dotenv";
+import path from "path";
 dotenv.config();
 
 //Internal modules
@@ -13,6 +14,9 @@ import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.resolve("public", "uploads")));
+app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
 
 // User endpoints/URL's
 app.use('/api',userRouter);

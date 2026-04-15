@@ -4,24 +4,23 @@
 import * as userService from "../services/user.service.js";
 import settingResponse from "../../../shared/utils/settingResponse.js";
 
+const handleServiceResult = (res, result, successStatus = 200) => {
+  if (result instanceof Error) {
+    return settingResponse(res, result);
+  }
+
+  if (!result.success) {
+    return res.status(result.status || 500).json(result);
+  }
+
+  return res.status(result.status || successStatus).json(result);
+};
+
 // User registration controller
 const userRegisterController = async (req, res) => {
   try {
     const result = await userService.userRegister(req.body);
-    
-    if (result instanceof Error) {
-      return settingResponse(res, result);
-    }
-
-    
-    if(result.code === 11000){
-      return res.status(409).json(result)
-    }
-
-    res.status(201).json({
-      message: "User registered successfuly!",
-      data: result,
-    });
+    return handleServiceResult(res, result, 201);
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -34,18 +33,7 @@ const userRegisterController = async (req, res) => {
 const userLoginController = async (req, res) => {
   try {
     const result = await userService.userLogin(req.body);
-    if (result instanceof Error) {
-      return settingResponse(res, result);
-    }
-
-    if(!result.success){
-      return res.status(401).json(result);
-    }
-    
-    res.status(200).json({
-      message: "Login successfuly!",
-      data: result,
-    });
+    return handleServiceResult(res, result);
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -54,73 +42,73 @@ const userLoginController = async (req, res) => {
   }
 };
 
-// user forget password controller
-const userForgetPasswordController = async (req, res) => {
+const resendEmailVerificationOTPController = async (req, res) => {
   try {
-    const result = await userService.userForgetPassword({
-        id: req.user._id,
-        name: req.user.name,
-        email: req.user.email,
-    });
-
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
+    const result = await userService.resendEmailVerificationOTP(req.body);
+    return handleServiceResult(res, result);
   } catch (err) {
-    return new Error(err.message);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };
 
-// user OTP verify controller
-const OTPVerifyController = async (req, res) => {
-  try { 
-    const result = await userService.userOTPVerify({
-        userId: req.userId,
-        otp: req.headers.otp,
+const verifyEmailOTPController = async (req, res) => {
+  try {
+    const result = await userService.verifyEmailOTP(req.body);
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
     });
-    
-    if (result instanceof Error) {
-      return settingResponse(res, result);
-    }
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
+  }
+};
 
-  } catch (err) {return new Error(err.message);} 
+const forgotPasswordRequestOTPController = async (req, res) => {
+  try {
+    const result = await userService.sendForgotPasswordOTP(req.body);
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+const forgotPasswordVerifyOTPController = async (req, res) => {
+  try {
+    const result = await userService.verifyForgotPasswordOTP(req.body);
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
 };
 
 //  user reset password controller
 const userResetPasswordController = async (req, res) => {
   try {
-    const { newPassword, confirmPassword } = req.body;
-    const userId = req.userId;
-    let result = null;
-    try {
-     result = await userService.userResetPassword({ newPassword, confirmPassword, userId });
-    }
-    catch (err) {
-      return settingResponse(res, err);
-     }
-    if (result instanceof Error) {
-      return settingResponse(res, result);
-    } 
-
-    res.status(200).json({
-      success: true,
-      message: "Password reset successfully",
-      result,
-    });
-   
+    const result = await userService.userResetPassword(req.body);
+    return handleServiceResult(res, result);
   } catch (err) {
-    return new Error(err.message);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 };
+
 export {
   userRegisterController,
   userLoginController,
-  userForgetPasswordController,
-  OTPVerifyController,
+  resendEmailVerificationOTPController,
+  verifyEmailOTPController,
+  forgotPasswordRequestOTPController,
+  forgotPasswordVerifyOTPController,
   userResetPasswordController
 };

@@ -10,10 +10,20 @@ const userOTPVerifySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  purpose: {
+    type: String,
+    enum: ["email_verification", "forgot_password"],
+    required: true,
   },
+  expireAt: {
+    type: Date,
+    required: true,
+  },
+}, {
+  timestamps: true,
 });
+
+userOTPVerifySchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
+userOTPVerifySchema.index({ userId: 1, purpose: 1 }, { unique: true });
 
 export default mongoose.model("UserOTPVerify", userOTPVerifySchema);

@@ -39,17 +39,29 @@ const userLoginValidation = (userData) => {
   }
 };
 
-// forget passwrod schema
-const forgetPasswrodSchema = z.object({
+const emailSchema = z.object({
   email: z.string().email(),
 });
 
-// forget password validation function
-const forgetPasswordValidation = (userData) => {
+const emailValidation = (userData) => {
   try {
-    return forgetPasswrodSchema.safeParse(userData);
+    return emailSchema.safeParse(userData);
   } catch (err) {
-    console.log("Error in forget password validation ", err);
+    console.log("Error in email validation ", err);
+    throw new Error(err.message);
+  }
+};
+
+const otpVerificationSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().min(4).max(10),
+});
+
+const otpVerificationValidation = (otpData) => {
+  try {
+    return otpVerificationSchema.safeParse(otpData);
+  } catch (err) {
+    console.log("Error in OTP verification validation ", err);
     throw new Error(err.message);
   }
 };
@@ -57,6 +69,7 @@ const forgetPasswordValidation = (userData) => {
 // user reset password schema
 const userResetPasswordSchema = z
   .object({
+    resetToken: z.string().min(10),
     newPassword: z.string().min(6),
     confirmPassword: z.string().min(6),
   })
@@ -77,6 +90,7 @@ const userResetPasswordValidation = (passwordData) => {
 export {
   userRegisterationValidation,
   userLoginValidation,
-  forgetPasswordValidation,
+  emailValidation,
+  otpVerificationValidation,
   userResetPasswordValidation
 };
