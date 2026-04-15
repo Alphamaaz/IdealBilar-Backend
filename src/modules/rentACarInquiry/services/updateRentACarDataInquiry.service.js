@@ -1,6 +1,6 @@
 // External modules
 
-import { updateRentACarDataRepository } from "../repositories/rentACarEditeDate.repository.js";
+import { updateRentACarDataRepository } from "../repositories/rentACarEditeDateInquiry.repository.js";
 
 // Internal modules
 

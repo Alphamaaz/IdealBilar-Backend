@@ -1,6 +1,6 @@
 //External modules
 
-import { updateRentACarService } from "../services/updateRentACarData.service.js";
+import { updateRentACarService } from "../services/updateRentACarDataInquiry.service.js";
 
 //Internal modules
 

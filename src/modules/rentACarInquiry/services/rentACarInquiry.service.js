@@ -1,6 +1,6 @@
 // Internal modules
 
-import { saveRentACarData } from "../repositories/rentACar.repository.js";
+import { saveRentACarData } from "../repositories/rentACarInquiry.repository.js";
 
 const rentACarService = async (rentACarData) => {
     try{

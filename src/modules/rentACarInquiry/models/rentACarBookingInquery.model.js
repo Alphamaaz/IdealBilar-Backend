@@ -25,10 +25,14 @@ const rentACarBookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    path:{
+     type: String,
+     required: true
+    },
     status: {
       type: String,
-      enum: ["booked", "cancelled", "completed", "Available"],
-      default: "Available",
+      enum: ["booked", "cancelled", "completed"],
+      default: "booked",
     },
   },
   {
