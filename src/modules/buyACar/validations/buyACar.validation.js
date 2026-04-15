@@ -31,17 +31,17 @@ const leaseSchema = z
     setupFee: z.coerce.number(),
     totalEstimate: z.coerce.number(),
   })
-  .refine(
-    (data) => {
-      const calculated =
-        ((data.monthlyCost * data.refund) + (data.downPayment + data.setupFee));
-      return data.totalEstimate >= calculated;
-    },
-    {
-      message: "Lease total estimate seems incorrect",
-      path: ["totalEstimate"],
-    },
-  );
+//   .refine(
+//     (data) => {
+//       const calculated =
+//         ((data.monthlyCost * data.refund) + (data.downPayment + data.setupFee));
+//       return data.totalEstimate >= calculated;
+//     },
+//     {
+//       message: "Lease total estimate seems incorrect",
+//       path: ["totalEstimate"],
+//     },
+//   );
 
 const buyACarValidationSchema = z.object({
   name: z.string(),

@@ -12,11 +12,7 @@ const issueToken = (payload, options = {}) => {
       throw new Error("JWT_SECRET_KEY is missing in environment variables");
     }
 
-    const token = jsonwebtoken.sign(
-      { payload },
-      secretKey,
-      { expiresIn: options.expiresIn || "1h" },
-    );
+    const token = jsonwebtoken.sign({ payload }, secretKey, { expiresIn: process.env.JWT_expire });
     return token;
   } catch (error) {
     throw new Error(error.message || "Error occurred while issuing token");
