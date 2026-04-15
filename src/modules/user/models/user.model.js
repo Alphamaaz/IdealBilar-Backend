@@ -13,15 +13,32 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    select: false
   },
   role: {
     type: String,
     enum: ["user", "admin"],
     default: "user"
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    transform: (_doc, ret) => {
+      delete ret.password;
+      return ret;
+    }
+  },
+  toObject: {
+    transform: (_doc, ret) => {
+      delete ret.password;
+      return ret;
+    }
+  }
 });
 
 export default mongoose.model("User", userSchema);

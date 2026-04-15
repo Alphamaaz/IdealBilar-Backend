@@ -3,10 +3,17 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const secretKey = process.env.JWT_SECRET_KEY;
-
 const jwtVerify = (token) => {
   try {
+    const secretKey = process.env.JWT_SECRET_KEY;
+
+    if (!secretKey) {
+      return {
+        success: false,
+        error: "JWT_SECRET_KEY is missing in environment variables",
+      };
+    }
+
     const decoded = jwt.verify(token, secretKey);
     return { success: true, data: decoded.payload };
   } catch (error) {

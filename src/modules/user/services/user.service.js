@@ -4,23 +4,61 @@
 import {
   userRegisterationValidation,
   userLoginValidation,
-  forgetPasswordValidation,
+  emailValidation,
+  otpVerificationValidation,
   userResetPasswordValidation,
 } from "../validations/user.validation.js";
 import comparePassword from "../../../shared/utils/comparePassword.js";
+import jwtVerify from "../../../shared/utils/jwtVerify.js";
 import passwordHashGenerate from "../../../shared/utils/passwordHashGenerate.js";
 import {
   createUser,
   getUserByEmail,
   getUserById as findUserById,
-  userOTPSave,
-  OTPVerify,
+  saveUserOTP,
+  findValidUserOTP,
+  deleteUserOTP,
+  markUserAsVerified,
   userResetPassword as updateUserPassword,
 } from "../repositories/user.repository.js";
 import { issueToken } from "../../../shared/utils/jwtTokenIssue.js";
 import OTPGenerate from "../utils/OTPGenerate.js";
 import sendOTPEmail from "../utils/sendOTPEmail.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
+
+const OTP_PURPOSES = {
+  EMAIL_VERIFICATION: "email_verification",
+  FORGOT_PASSWORD: "forgot_password",
+};
+
+const RESET_TOKEN_PURPOSE = "password_reset";
+
+const sanitizeUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  isVerified: user.isVerified,
+});
+
+const issueAndSendOTP = async (user, purpose) => {
+  const otp = OTPGenerate();
+
+  await saveUserOTP(user._id, otp, purpose);
+
+  try {
+    await sendOTPEmail(user.email, otp, purpose);
+  } catch (err) {
+    await deleteUserOTP(user._id, purpose);
+    throw err;
+  }
+
+  return {
+    email: user.email,
+    purpose,
+    expiresInMinutes: 5,
+  };
+};
 
 // User Registration service
 const userRegister = async (userData) => {
@@ -37,21 +75,140 @@ const userRegister = async (userData) => {
 
     const createdUser = await createUser(data);
 
-    return { success: true, data: createdUser };
+    try {
+      await issueAndSendOTP(createdUser, OTP_PURPOSES.EMAIL_VERIFICATION);
+    } catch (err) {
+      return {
+        success: false,
+        status: 500,
+        message: "User created but failed to send verification OTP. Please request resend OTP.",
+        data: sanitizeUser(createdUser),
+      };
+    }
+
+    return {
+      success: true,
+      status: 201,
+      message: "User registered successfully. Please verify your email with the OTP sent to your inbox.",
+      data: sanitizeUser(createdUser),
+    };
   } catch (err) {
     if (err.code === 11000) {
       return {
+        success: false,
+        status: 409,
         code: 11000,
-        result: {
-          success: false,
-          message: "Duplicate record (email already exists)",
-        }
+        message: "Duplicate record (email already exists)",
       };
     }
 
     return {
       success: false,
       status: err.status || 500,
+      message: err.message,
+    };
+  }
+};
+
+const resendEmailVerificationOTP = async (emailData) => {
+  try {
+    const { success, error } = emailValidation(emailData);
+
+    if (!success) {
+      return settingErrorStatusAndMessage(error);
+    }
+
+    const user = await getUserByEmail(emailData.email);
+
+    if (!user) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    if (user.isVerified) {
+      return {
+        success: false,
+        status: 400,
+        message: "Email is already verified",
+      };
+    }
+
+    await issueAndSendOTP(user, OTP_PURPOSES.EMAIL_VERIFICATION);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Verification OTP sent successfully",
+      data: {
+        email: user.email,
+      },
+    };
+  } catch (err) {
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
+  }
+};
+
+const verifyEmailOTP = async (otpData) => {
+  try {
+    const { success, error } = otpVerificationValidation(otpData);
+
+    if (!success) {
+      return settingErrorStatusAndMessage(error);
+    }
+
+    const user = await getUserByEmail(otpData.email);
+
+    if (!user) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    if (user.isVerified) {
+      return {
+        success: true,
+        status: 200,
+        message: "Email is already verified",
+        data: sanitizeUser(user),
+      };
+    }
+
+    const validOTP = await findValidUserOTP(
+      user._id,
+      otpData.otp,
+      OTP_PURPOSES.EMAIL_VERIFICATION,
+    );
+
+    if (!validOTP) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid or expired verification OTP",
+      };
+    }
+
+    const verifiedUser = await markUserAsVerified(user._id);
+    await deleteUserOTP(user._id, OTP_PURPOSES.EMAIL_VERIFICATION);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Email verified successfully",
+      data: sanitizeUser(verifiedUser),
+    };
+  } catch (err) {
+    return {
+      success: false,
+      status: 500,
       message: err.message,
     };
   }
@@ -65,12 +222,20 @@ const userLogin = async (userData) => {
       const validationErrors = settingErrorStatusAndMessage(error);
       return validationErrors;
     }
-    const user = await getUserByEmail(data.email);
+    const user = await getUserByEmail(data.email, true);
 
     if (!user) {
       const error = new Error("User not found");
       error.status = 404;
       return error;
+    }
+
+    if (!user.isVerified) {
+      return {
+        success: false,
+        status: 403,
+        message: "User not verified. Please verify your email first.",
+      };
     }
 
     const isPasswordValid = await comparePassword(data.password, user.password);
@@ -84,31 +249,68 @@ const userLogin = async (userData) => {
 
     return {
       success: true,
+      status: 200,
       data: {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
       },
       token,
     };
   } catch (err) {
-    return { success: false, error: err.message };
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
   }
 };
 
-// user data service for middleware
-const userData = async (email) => {
+const sendForgotPasswordOTP = async (emailData) => {
   try {
-    const { success, data, error } = forgetPasswordValidation(email);
+    const { success, error } = emailValidation(emailData);
+
     if (!success) {
       const validationError = settingErrorStatusAndMessage(error);
       return validationError;
     }
 
-    const userDataForMiddleware = await getUserByEmail(email.email);
-    return userDataForMiddleware;
+    const user = await getUserByEmail(emailData.email);
+
+    if (!user) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    if (!user.isVerified) {
+      return {
+        success: false,
+        status: 400,
+        message: "Please verify your email before requesting a password reset OTP",
+      };
+    }
+
+    await issueAndSendOTP(user, OTP_PURPOSES.FORGOT_PASSWORD);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Forgot password OTP sent successfully",
+      data: {
+        email: user.email,
+      },
+    };
   } catch (err) {
-    throw new Error(err.message);
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
   }
 };
 
@@ -121,78 +323,130 @@ const getUserById = async (userId) => {
   }
 };
 
-// forget passwrod service
-const userForgetPassword = async (userDataForForgetPassword) => {
+const verifyForgotPasswordOTP = async (otpData) => {
   try {
-    const otp = OTPGenerate();
-    await sendOTPEmail(userDataForForgetPassword.email, otp);
+    const { success, error } = otpVerificationValidation(otpData);
 
-    const saveOTP = await userOTPSave(userDataForForgetPassword.id, otp);
+    if (!success) {
+      return settingErrorStatusAndMessage(error);
+    }
 
-    const result = {
-      otpId: saveOTP._id,
-      otp: saveOTP.otp,
-    };
+    const user = await getUserByEmail(otpData.email);
+
+    if (!user) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    const validOTP = await findValidUserOTP(
+      user._id,
+      otpData.otp,
+      OTP_PURPOSES.FORGOT_PASSWORD,
+    );
+
+    if (!validOTP) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid or expired forgot password OTP",
+      };
+    }
 
     return {
       success: true,
+      status: 200,
+      message: "Forgot password OTP verified successfully",
       data: {
-        message: "OTP sent to email successfully",
-        result: result,
+        email: user.email,
+        resetToken: issueToken(
+          {
+            userId: user._id.toString(),
+            email: user.email,
+            purpose: RESET_TOKEN_PURPOSE,
+          },
+          { expiresIn: "10m" },
+        ),
       },
     };
   } catch (err) {
-    throw new Error(err.message);
-  }
-};
-
-// user OTP verify service
-const userOTPVerify = async (OTPData) => {
-  try {
-    const { userId, otp } = OTPData;
-    const userOTPData = await OTPVerify(userId, otp);
-
-    let error = new Error("OTP verification failed, Try again!");
-    error.status = 400;
-
-    if (!userOTPData) {
-      return error;
-    }
-    return { success: true, data: "OTP verified successfully" };
-  } catch (err) {
-    throw new Error(err.message);
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
   }
 };
 
 // user reset password service
 const userResetPassword = async (resetPasswordData) => {
   try {
-    const { newPassword, confirmPassword, userId } = resetPasswordData;
-
-    const { success, data, error } = userResetPasswordValidation({
-      newPassword,
-      confirmPassword,
-    });
+    const { success, data, error } = userResetPasswordValidation(resetPasswordData);
     if (!success) {
       const validationError = settingErrorStatusAndMessage(error);
       return validationError;
     }
 
-    const hashedPassword = await passwordHashGenerate(newPassword);
-    const updatedUser = await updateUserPassword(userId, hashedPassword);
+    const resetTokenVerification = jwtVerify(data.resetToken);
 
-    return updatedUser;
+    if (!resetTokenVerification.success) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid or expired reset token",
+      };
+    }
+
+    const resetTokenData = resetTokenVerification.data;
+
+    if (resetTokenData?.purpose !== RESET_TOKEN_PURPOSE || !resetTokenData?.userId) {
+      return {
+        success: false,
+        status: 400,
+        message: "Invalid reset token payload",
+      };
+    }
+
+    const user = await findUserById(resetTokenData.userId);
+
+    if (!user) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    const hashedPassword = await passwordHashGenerate(data.newPassword);
+    await updateUserPassword(user._id, hashedPassword);
+    await deleteUserOTP(user._id, OTP_PURPOSES.FORGOT_PASSWORD);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Password reset successfully",
+      data: {
+        email: user.email,
+      },
+    };
   } catch (err) {
-    throw new Error(err.message);
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
   }
 };
 
 export {
   userRegister,
+  resendEmailVerificationOTP,
+  verifyEmailOTP,
   userLogin,
-  userForgetPassword,
-  userData,
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
   getUserById,
-  userOTPVerify,
   userResetPassword,
 };

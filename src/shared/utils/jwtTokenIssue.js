@@ -2,17 +2,24 @@
 import dotenv from "dotenv";
 import jsonwebtoken from "jsonwebtoken";
 
-//Internal modules
 dotenv.config();
 
-const secretKey = process.env.JWT_SECRET_KEY;
-
-const issueToken = (payload) => {
+const issueToken = (payload, options = {}) => {
   try {
-    const token = jsonwebtoken.sign({ payload }, secretKey, { expiresIn: "1h" });
+    const secretKey = process.env.JWT_SECRET_KEY;
+
+    if (!secretKey) {
+      throw new Error("JWT_SECRET_KEY is missing in environment variables");
+    }
+
+    const token = jsonwebtoken.sign(
+      { payload },
+      secretKey,
+      { expiresIn: options.expiresIn || "1h" },
+    );
     return token;
   } catch (error) {
-    throw new Error("Error occurred while issuing token");
+    throw new Error(error.message || "Error occurred while issuing token");
   }
 };
 

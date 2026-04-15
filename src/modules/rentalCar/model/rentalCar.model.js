@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 const ImageSchema = new mongoose.Schema({
-  url: String, // stored path from multer
+  url: String,
+  fileName: String,
   isMain: { type: Boolean, default: false },
-  sortOrder: Number,
+  sortOrder: { type: Number, default: 0 },
 });
 
 const DealerSchema = new mongoose.Schema({
@@ -25,15 +26,18 @@ const CarSchema = new mongoose.Schema(
     year: Number,
     mileage: Number,
     power: Number, // HP
+    seats: Number,
 
     fuel: String,
-    gearbox: String,
+    transmission: String,
     vehicleType: String, // SUV
 
     color: String,
 
-    price: {
-      value: Number,
+    pricing: {
+      perDay: Number,
+      perWeek: Number,
+      perMonth: Number,
       currency: { type: String, default: "SEK" },
     },
 
