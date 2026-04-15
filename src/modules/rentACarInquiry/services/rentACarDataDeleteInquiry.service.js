@@ -1,7 +1,7 @@
 //External modules
 
 //Internal modules
-import {rentACarDataDeleteRepository } from '../repositories/rentACarDataDelete.repository.js'
+import {rentACarDataDeleteRepository } from '../repositories/rentACarDataDeleteInquiry.repository.js'
 
 const rentACarDataDeleteService = async (rentACarId) => {
     try{

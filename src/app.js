@@ -7,7 +7,7 @@ dotenv.config();
 import { userRouter } from "./modules/user/index.js";
 import { carRentalRouter } from './modules/rentalCar/index.js';
 import {Router as contactusRouter } from './modules/contactus/index.js'
-import rentACarRouter from './modules/rentACar/index.js'
+import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 
 const app = express();
