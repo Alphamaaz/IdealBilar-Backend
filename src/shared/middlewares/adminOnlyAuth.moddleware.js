@@ -1,3 +1,6 @@
+//Internal modules
+import * as userService from "../../modules/user/services/user.service.js";
+
 const adminOnlyMiddleware = async (req, res, next) => {
   try {
     const userId = req.userId;
