@@ -1,3 +1,4 @@
+import rentACarBookingInqueryModel from "../../rentACarInquiry/models/rentACarBookingInquery.model.js";
 import RentalCar from "../model/rentalCar.model.js";
 import {
   rentalcarValidation,
@@ -243,10 +244,15 @@ const getCarRentalByIdService = async (id) => {
         message: "Car rental not found",
       };
     }
+    const bookingDetails = await rentACarBookingInqueryModel.find({
+      carId: id
+    }).populate();
+    const carRentalData = carRental.toObject();
+    carRentalData.bookings = bookingDetails;
     return {
       success: true,
       status: 200,
-      data: carRental,
+      data: carRentalData,
     };
   } catch (error) {
     if (error.name === "CastError") {

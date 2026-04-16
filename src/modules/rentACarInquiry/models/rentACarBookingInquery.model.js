@@ -4,19 +4,25 @@ import mongoose from "mongoose";
 // rent A car Booking
 const rentACarBookingSchema = new mongoose.Schema(
   {
-    // carId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Car",
-    //   required: true,
-    // },
+    carId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RentalCar",
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    licenseImage: {
+      type: String,
+      required: true,
+    },
     pickupLocation: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
+    
     pickupDate: {
       type: Date,
       required: true,
@@ -25,14 +31,14 @@ const rentACarBookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    path:{
-     type: String,
-     required: true
+    perDayRent: {
+      type: Number,
+      required: true,
     },
-    status: {
-      type: String,
-      enum: ["booked", "cancelled", "completed"],
-      default: "booked",
+    
+    totalRent: {
+      type: Number,
+      required: true,
     },
   },
   {

@@ -6,8 +6,11 @@ import RentACarBooking from "../models/rentACarBookingInquery.model.js";
 
 const rentACarDataForAdminDashboard = async () => {
     try{
-       const result = await RentACarBooking.find();
-       return result;
+       const result = await RentACarBooking.find()
+         .populate("userId", "name email role")
+         .populate("carId", "make model year title thumbnail ");
+               
+         return result;
     }catch(err){
         throw err;
     }

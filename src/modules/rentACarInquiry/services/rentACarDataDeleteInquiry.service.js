@@ -5,12 +5,38 @@ import {rentACarDataDeleteRepository } from '../repositories/rentACarDataDeleteI
 
 const rentACarDataDeleteService = async (rentACarId) => {
     try{
+        const deletedInquiry = await rentACarDataDeleteRepository(rentACarId);
 
-        console.log("We are in the rent a car data delete service");
-        rentACarDataDeleteRepository(rentACarId);
+        if (!deletedInquiry) {
+            return {
+                success: false,
+                status: 404,
+                message: "Rent a car inquiry not found",
+            };
+        }
+
+        return {
+            success: true,
+            status: 200,
+            message: "Rent a car inquiry deleted successfully",
+            data: deletedInquiry,
+        };
         
     }catch(err){
-        throw err;
+        if (err.name === "CastError") {
+            return {
+                success: false,
+                status: 400,
+                message: "Invalid rent a car inquiry ID",
+            };
+        }
+
+        return {
+            success: false,
+            status: 500,
+            message: "Failed to delete rent a car inquiry",
+            error: err.message,
+        };
     }
 }
 
