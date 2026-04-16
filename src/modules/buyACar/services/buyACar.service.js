@@ -6,9 +6,8 @@ import { buyACarRepository } from "../repositories/buyACar.repository.js";
 
 const buyACarService = async (buyACarData) => {
     try{
-      console.log("We are in the buy a car service");
-      buyACarRepository(buyACarData);
-      
+     const result = await buyACarRepository(buyACarData);
+     return result;
     }catch(err){
         throw err;
     }
