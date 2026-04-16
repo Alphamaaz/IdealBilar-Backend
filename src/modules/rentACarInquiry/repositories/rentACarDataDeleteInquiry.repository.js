@@ -1,11 +1,11 @@
-//External modules
-
 //Internal modules
+import RentACarBooking from "../models/rentACarBookingInquery.model.js";
 
 const rentACarDataDeleteRepository = async (rentACarId) => {
     try{
-      console.log("We are in the rent a car data delete repository");
-      
+        const result = await RentACarBooking.findByIdAndDelete(rentACarId);
+        return result;
+
     }catch(err){
         throw err
     }

@@ -1,5 +1,3 @@
-// Internal modules
-import { pick } from "zod/mini";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
 import { rentACarService } from "../services/rentACarInquiry.service.js";
 import { rentACarDataValidationFunction } from "../validations/rentACarInquiry.validation.js";
@@ -10,16 +8,16 @@ const rentACarController = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Image is required",
+        message: "License Image is required",
       });
     }
 
-    const filePath = req.file.path.replace(/\\/g, "/");
+    const filePath = `/uploads/licenses/${req.file.filename}`;
 
     // Build correct structure
     const inputData = {
       ...req.body,
-      image: {
+      licenseImage: {
         url: filePath, // or your hosted URL
         isMain: true,
         sortOrder: 0,
@@ -29,25 +27,30 @@ const rentACarController = async (req, res) => {
     const { success, data, error } = rentACarDataValidationFunction(inputData);
 
     if (!success) {
-      const validationError = settingErrorStatusAndMessage(error);
-      return res.status(validationError.status).json(validationError);
+      return res.status(400).json({
+        success: false,
+        message: error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", "),
+      });
     }
 
     // console.log("Validation pass ", data);
     const correctDataFormat = {
       ...data,
+      userId: req.userId,
       pickupDate: normalizeDate(data.pickupDate).date,
       returnDate: normalizeDate(data.returnDate).date,
-      path: data.image.url, // Assuming your service expects just the URL
+      licenseImage: data.licenseImage.url,
     };
 
     const result = await rentACarService(correctDataFormat);
 
-    res.status(200).json({
-      success: true,
-      message: "Processed the rent a car successfully!",
-      data: result,
-    });
+    if (!result.success) {
+      return res.status(result.status || 500).json(result);
+    }
+
+    res.status(result.status).json(result);
   } catch (err) {
     // console.error("Error occur during rent a car processing:", err);
     res.status(500).json({
