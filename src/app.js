@@ -13,6 +13,7 @@ import { dovraInquiryRouter } from "./modules/Dovra/index.js";
 import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
+import { notificationRouter } from './modules/notification/index.js';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/v1', buyACarhandler);
 app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
 app.use('/api/v1', workshopServicesRouter);
+app.use('/api/v1', notificationRouter);
 
 
 app.get('/api/v1/health', (req, res) => {

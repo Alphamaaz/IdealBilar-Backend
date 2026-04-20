@@ -1,7 +1,15 @@
 import CarWashBooking from "../models/carWashBooking.model.js";
+import { notificationServices } from "../../notification/services/notification.service.js";
 
 const createCarWashBookingRepository = async (bookingData) => {
   const result = await CarWashBooking.create(bookingData);
+  await notificationServices({
+    name: bookingData.firstName,
+    type: "Car Wash",
+    message: `${bookingData.firstName} ${bookingData.lastName} has inquired about Car Wash`,
+    model: bookingData.carBrandAndModel,
+    referenceId: result._id,
+  });
   return result;
 };
 
