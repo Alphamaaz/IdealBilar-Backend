@@ -6,7 +6,7 @@ import { BuyACar } from "../models/buyACar.model.js"
 const buyACarFetchingDataRepository = async () => {
     try {
         const result = await BuyACar
-        .find();
+        .find().populate("userId", "name email");
         return result;
     } catch (error) {
         throw error;

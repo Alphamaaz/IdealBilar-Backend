@@ -1,0 +1,28 @@
+import express from "express";
+import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
+import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
+import {
+  createDovraInquiryController,
+  deleteDovraInquiryController,
+  getAllDovraInquiriesController,
+} from "../controllers/dovraInquiry.controller.js";
+
+const dovraInquiryRouter = express.Router();
+
+dovraInquiryRouter.post("/dovra-inquiry", createDovraInquiryController);
+
+dovraInquiryRouter.get(
+  "/dovra-inquiries",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  getAllDovraInquiriesController,
+);
+
+dovraInquiryRouter.delete(
+  "/dovra-inquiry/:id",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  deleteDovraInquiryController,
+);
+
+export default dovraInquiryRouter;
