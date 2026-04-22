@@ -15,9 +15,23 @@ import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
 import { notificationRouter } from './modules/notification/index.js';
-
+const allowedOrigins = new Set([
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3001",
+  "http://localhost:3000"
+]);
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.resolve("public", "uploads")));
