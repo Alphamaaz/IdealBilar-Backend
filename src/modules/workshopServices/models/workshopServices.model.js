@@ -17,6 +17,9 @@ const workshopServicesSchema = new mongoose.Schema({
         enum: ["active", "inactive"],
         default: "active"
     },
+    details: {
+        type: String,
+    },
     serviceCreatedAt: {
         type: Date,
         default: Date.now

@@ -2,12 +2,13 @@ import WorkshopServices from "../models/workshopServices.model.js";
 
 const createWorkshopService = async (validatedData) => {
     try {
-        const { name, description, image, status } = validatedData;
+        const { name, description, image, status, details } = validatedData;
         const workshopService = await WorkshopServices.create({
             serviceName: name,
             serviceDescription: description,
             serviceImage: image,
-            serviceStatus: status
+            serviceStatus: status,
+            details: details
         });
         return workshopService;
     } catch (error) {
