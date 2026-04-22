@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController } from "../controllers/notification.controller.js";
+import { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController, getNotificationsCountController, deleteAllNotificationController } from "../controllers/notification.controller.js";
 
 const router = Router();
 
 router.post("/notification", notificationController);
 router.get("/notification", getAllNotificationController);
+router.get("/notification/count", getNotificationsCountController);
+router.delete("/notification", deleteAllNotificationController);
 router.get("/notification/:id", getSingleNotificationController);
 router.put("/notification/:id", updateNotificationController);
 router.delete("/notification/:id", deleteNotificationController);

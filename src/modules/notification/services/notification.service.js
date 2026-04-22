@@ -25,6 +25,15 @@ const getAllNotificationServices = async () => {
     }
 }
 
+const getNotificationsCountService = async () => {
+    try {
+        const count = await Notification.countDocuments({ isRead: false });
+        return count;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const getSingleNotificationService = async (id) => {
     try {
         const notification = await Notification.findById(id);
@@ -74,4 +83,23 @@ const markAllAsReadService = async () => {
     }
 }
 
-export { notificationServices, getAllNotificationServices, getSingleNotificationService, updateNotificationService, deleteNotificationService, markAsReadService, markAllAsReadService };
+const deleteAllNotificationService = async () => {
+    try {
+        await Notification.deleteMany();
+        return true;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export {
+    notificationServices,
+    getAllNotificationServices,
+    getSingleNotificationService,
+    updateNotificationService,
+    deleteNotificationService,
+    markAsReadService,
+    markAllAsReadService,
+    getNotificationsCountService,
+    deleteAllNotificationService,
+};

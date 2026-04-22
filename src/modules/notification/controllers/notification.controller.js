@@ -1,4 +1,14 @@
-import { getAllNotificationServices, getSingleNotificationService, notificationServices, updateNotificationService, deleteNotificationService, markAsReadService, markAllAsReadService } from "../services/notification.service.js";
+import {
+    getAllNotificationServices,
+    getSingleNotificationService,
+    notificationServices,
+    updateNotificationService,
+    deleteNotificationService,
+    markAsReadService,
+    markAllAsReadService,
+    getNotificationsCountService,
+    deleteAllNotificationService,
+} from "../services/notification.service.js";
 
 const notificationController = async (req, res) => {
 
@@ -69,6 +79,22 @@ const updateNotificationController = async (req, res) => {
     }
 }
 
+const deleteAllNotificationController = async (req, res) => {
+    try {
+        const notification = await deleteAllNotificationService();
+        res.status(200).json({
+            success: true,
+            message: "All notifications deleted successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete all notifications",
+            error: error.message
+        });
+    }
+}
+
 const deleteNotificationController = async (req, res) => {
     try {
         const notification = await deleteNotificationService(req.params.id);
@@ -121,4 +147,21 @@ const markAllAsReadController = async (req, res) => {
     }
 }
 
-export { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController };
+const getNotificationsCountController = async (req, res) => {
+    try {
+        const count = await getNotificationsCountService();
+        res.status(200).json({
+            success: true,
+            message: "Notifications count fetched successfully",
+            data: { count }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch notifications count",
+            error: error.message
+        });
+    }
+}
+
+export { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController, getNotificationsCountController, deleteAllNotificationController };

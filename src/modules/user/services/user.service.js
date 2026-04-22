@@ -23,8 +23,8 @@ import {
 } from "../repositories/user.repository.js";
 import { issueToken } from "../../../shared/utils/jwtTokenIssue.js";
 import OTPGenerate from "../utils/OTPGenerate.js";
-import sendOTPEmail from "../utils/sendOTPEmail.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
+import { sendOTPEmail } from "../utils/sendOTPEmail.js";
 
 const OTP_PURPOSES = {
   EMAIL_VERIFICATION: "email_verification",

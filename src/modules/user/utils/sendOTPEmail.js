@@ -39,14 +39,14 @@ const getOTPContent = (purpose, email, otp) => {
 // Create a transporter using your email service credentials
 const transporter = nodemailer.createTransport({
   secure: true,
-  host: "smtp.gmail.com",
-  port: 465,
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
-    
+
 // Function to send OTP email
 const sendOTPEmail = async (email, otp, purpose = "forgot_password") => {
   try {
@@ -64,4 +64,23 @@ const sendOTPEmail = async (email, otp, purpose = "forgot_password") => {
   }
 };
 
-export default sendOTPEmail;
+const sendInquiryEmail = async (email, name, type) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Idealbilar" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `${name} has sent a new ${type} inquiry`,
+      html: `Dear User,
+             You have received a new ${type} inquiry from ${name}.`,
+    });
+    return info;
+  } catch (error) {
+    throw new Error("Failed to send inquiry email");
+  }
+};
+
+
+
+
+export { sendOTPEmail, sendInquiryEmail };
+
