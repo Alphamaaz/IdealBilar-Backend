@@ -1,6 +1,7 @@
 // External modules
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
+import dns from "dns";
 
 dotenv.config();
 
@@ -38,12 +39,18 @@ const getOTPContent = (purpose, email, otp) => {
 
 // Create a transporter using your email service credentials
 const transporter = nodemailer.createTransport({
-  secure: true,
+  secure: false, // Changed from true to false for port 587
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false, // Often helpful in local/dev environments
+  },
+  lookup: (hostname, options, callback) => {
+    dns.lookup(hostname, { family: 4 }, callback);
   },
 });
 
