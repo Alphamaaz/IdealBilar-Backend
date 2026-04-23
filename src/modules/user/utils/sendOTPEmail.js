@@ -60,7 +60,7 @@ const sendOTPEmail = async (email, otp, purpose = "forgot_password") => {
     });
     return info;
   } catch (error) {
-    throw new Error("Failed to send OTP email");
+    throw new Error(`Failed to send OTP email: ${error.message}`);
   }
 };
 
@@ -75,7 +75,7 @@ const sendInquiryEmail = async (email, name, type) => {
     });
     return info;
   } catch (error) {
-    throw new Error("Failed to send inquiry email");
+    throw new Error(`Failed to send inquiry email: ${error.message}`);
   }
 };
 

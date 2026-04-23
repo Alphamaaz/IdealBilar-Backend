@@ -6,7 +6,7 @@ const comparePassword = async (plainPassword, hashedPassword) => {
     const isMatch = await argon2.verify(hashedPassword, plainPassword);
     return isMatch;
   } catch (error) {
-    throw new Error("Error while comparing passwords");
+    throw new Error(`Error while comparing passwords: ${error.message}`);
   }
 };
 
