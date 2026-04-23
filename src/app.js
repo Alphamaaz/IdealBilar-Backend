@@ -19,15 +19,24 @@ const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3001",
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "http://31.97.77.215" // Added based on user screenshot
 ]);
+
+if (process.env.ALLOWED_ORIGINS) {
+  process.env.ALLOWED_ORIGINS.split(",").forEach(origin => allowedOrigins.add(origin.trim()));
+}
 const app = express();
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.has(origin)) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.has(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`CORS blocked for origin: ${origin}`);
+      callback(new Error(`Not allowed by CORS: ${origin}`));
     }
   },
   credentials: true
@@ -67,6 +76,24 @@ app.get('/api/v1/health', (req, res) => {
     status: 'success',
     success: true,
     message: 'Server is healthy',
+  });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  // Log error for debugging
+  console.error(`[API Error] ${req.method} ${req.url} - Status: ${status} - Message: ${message}`);
+  if (status === 500) {
+    console.error(err.stack);
+  }
+
+  res.status(status).json({
+    success: false,
+    message: message,
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 
