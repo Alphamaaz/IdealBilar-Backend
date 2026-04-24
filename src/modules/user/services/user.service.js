@@ -62,6 +62,7 @@ const issueAndSendOTP = async (user, purpose) => {
 
 // User Registration service
 const userRegister = async (userData) => {
+  console.log("Registering user with data:", JSON.stringify(userData, null, 2));
   try {
     const { success, data, error } = userRegisterationValidation(userData);
 
@@ -78,10 +79,11 @@ const userRegister = async (userData) => {
     try {
       await issueAndSendOTP(createdUser, OTP_PURPOSES.EMAIL_VERIFICATION);
     } catch (err) {
+      console.error("Failed to send registration OTP email:", err);
       return {
         success: false,
         status: 500,
-        message: "User created but failed to send verification OTP. Please request resend OTP.",
+        message: `User created but failed to send verification OTP: ${err.message}. Please request resend OTP.`,
         data: sanitizeUser(createdUser),
       };
     }
