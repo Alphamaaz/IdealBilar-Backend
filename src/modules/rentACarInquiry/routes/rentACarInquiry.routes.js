@@ -6,7 +6,8 @@ import { rentACarController as RentACarHandler } from "../controllers/rentACarIn
 import { rentACarFetchingDataForAdminDashboardController } from "../controllers/rentACarFetchingDataForDashooardInquiry.controller.js";
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
-import { adminOnlyMiddleware, middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
+import {  middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
+import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
 
 const rentACarRouter = express.Router();

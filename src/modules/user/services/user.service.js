@@ -64,7 +64,8 @@ const issueAndSendOTP = async (user, purpose) => {
 const userRegister = async (userData) => {
   try {
     const { success, data, error } = userRegisterationValidation(userData);
-
+    console.log("We are in the user register service ", data);
+    
     if (!success) {
       const validationError = settingErrorStatusAndMessage(error);
       return validationError;
