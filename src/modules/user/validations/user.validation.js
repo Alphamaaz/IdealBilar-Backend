@@ -54,7 +54,7 @@ const emailValidation = (userData) => {
 
 const otpVerificationSchema = z.object({
   email: z.string().email(),
-  otp: z.string().min(4).max(10),
+  otp: z.string().length(6, { message: "OTP must be exactly 6 digits" }),
 });
 
 const otpVerificationValidation = (otpData) => {

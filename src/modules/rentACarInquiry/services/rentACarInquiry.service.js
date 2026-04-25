@@ -1,12 +1,33 @@
 // Internal modules
 
+import RentalCar from "../../rentalCar/model/rentalCar.model.js";
 import {
   findOverlappingRentACarBooking,
   saveRentACarData,
 } from "../repositories/rentACarInquiry.repository.js";
 
+const formatDate = (date) => new Date(date).toISOString().split("T")[0];
+
 const rentACarService = async (rentACarData) => {
     try{
+      const rentalCar = await RentalCar.findById(rentACarData.carId);
+
+      if (!rentalCar) {
+        return {
+          success: false,
+          status: 404,
+          message: "Rental car not found.",
+        };
+      }
+
+      if (["booked", "rented", "sold", "maintenance"].includes(rentalCar.status)) {
+        return {
+          success: false,
+          status: 409,
+          message: "This car is currently unavailable for booking. Please choose another car or different dates.",
+        };
+      }
+
       const existingBooking = await findOverlappingRentACarBooking({
         carId: rentACarData.carId,
         pickupDate: rentACarData.pickupDate,
@@ -17,7 +38,7 @@ const rentACarService = async (rentACarData) => {
         return {
           success: false,
           status: 409,
-          message: `This car is already booked from ${existingBooking.pickupDate.toISOString().split("T")[0]} to ${existingBooking.returnDate.toISOString().split("T")[0]}. Please choose different dates.`,
+          message: `This car is already booked from ${formatDate(existingBooking.pickupDate)} to ${formatDate(existingBooking.returnDate)}. Please choose another day or different dates.`,
         };
       }
 

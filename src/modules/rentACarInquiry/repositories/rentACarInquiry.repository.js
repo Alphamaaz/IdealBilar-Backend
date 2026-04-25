@@ -2,6 +2,7 @@
 
 // Internal modules
 import RentACarBooking from "../models/rentACarBookingInquery.model.js"
+import { notificationServices } from "../../notification/services/notification.service.js";
 
 const findOverlappingRentACarBooking = async ({ carId, pickupDate, returnDate }) => {
     try {
@@ -23,6 +24,13 @@ const saveRentACarData = async (rentACarData) => {
       const populatedResult = await RentACarBooking.findById(result._id)
         .populate("userId", "name email role")
         .populate("carId", "make model year title thumbnail ");
+      await notificationServices({
+        name: populatedResult.userId?.name,
+        type: "Rent a Car",
+        message: `${populatedResult.userId?.name} has inquired about renting a car`,
+        model: populatedResult.carId ? `${populatedResult.carId.make} ${populatedResult.carId.model}` : undefined,
+        referenceId: result._id,
+      });
       return populatedResult;
     }catch(err){
         throw err
