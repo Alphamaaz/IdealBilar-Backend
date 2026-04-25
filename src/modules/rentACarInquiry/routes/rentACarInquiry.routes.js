@@ -6,7 +6,11 @@ import { rentACarController as RentACarHandler } from "../controllers/rentACarIn
 import { rentACarFetchingDataForAdminDashboardController } from "../controllers/rentACarFetchingDataForDashooardInquiry.controller.js";
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
+<<<<<<< HEAD
 import {  middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
+=======
+import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
+>>>>>>> cf1fdd0e1ea9a17afe2798264513e0803ec76600
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
 

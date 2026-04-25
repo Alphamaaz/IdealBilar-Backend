@@ -23,8 +23,8 @@ import {
 } from "../repositories/user.repository.js";
 import { issueToken } from "../../../shared/utils/jwtTokenIssue.js";
 import OTPGenerate from "../utils/OTPGenerate.js";
-import sendOTPEmail from "../utils/sendOTPEmail.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
+import { sendOTPEmail } from "../utils/sendOTPEmail.js";
 
 const OTP_PURPOSES = {
   EMAIL_VERIFICATION: "email_verification",
@@ -62,6 +62,7 @@ const issueAndSendOTP = async (user, purpose) => {
 
 // User Registration service
 const userRegister = async (userData) => {
+  console.log("Registering user with data:", JSON.stringify(userData, null, 2));
   try {
     const { success, data, error } = userRegisterationValidation(userData);
     console.log("We are in the user register service ", data);
@@ -79,10 +80,11 @@ const userRegister = async (userData) => {
     try {
       await issueAndSendOTP(createdUser, OTP_PURPOSES.EMAIL_VERIFICATION);
     } catch (err) {
+      console.error("Failed to send registration OTP email:", err);
       return {
         success: false,
         status: 500,
-        message: "User created but failed to send verification OTP. Please request resend OTP.",
+        message: `User created but failed to send verification OTP: ${err.message}. Please request resend OTP.`,
         data: sanitizeUser(createdUser),
       };
     }

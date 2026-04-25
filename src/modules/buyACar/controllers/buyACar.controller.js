@@ -24,7 +24,7 @@ const buyACarController = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "You are Buy a car request recived successfully!",
+      message: "Your Buy a car request recived successfully!",
       data: result,
     });
   } catch (err) {
