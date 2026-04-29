@@ -6,13 +6,20 @@ import { updateRentACarService } from "../services/updateRentACarDataInquiry.ser
 
 const rentACarEditeController = async (req, res) =>{
     try{
-        updateRentACarService("hksjdksjd");
+        const {id} = req.params;
+        const data = req.body;
+        const result = await updateRentACarService(id, data);
         res.status(200).json({
             success: true,
-            message: "Reached to the rent a car edite controller!"
-        })
+            message: "Rent a car inquiry updated successfully",
+            data: result
+        });
     }catch(err){
-        throw err;
+        res.status(500).json({
+            success: false,
+            message: "Failed to update rent a car inquiry",
+            error: err.message
+        });
     }
 }
 
