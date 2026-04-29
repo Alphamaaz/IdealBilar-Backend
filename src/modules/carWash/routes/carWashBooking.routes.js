@@ -10,7 +10,11 @@ import {
 
 const carWashRouter = express.Router();
 
-carWashRouter.post("/car-wash-booking", createCarWashBookingController);
+carWashRouter.post(
+  "/car-wash-booking",
+  middlewareForVerifyJwtToken,
+  createCarWashBookingController,
+);
 carWashRouter.get("/car-wash-booked-times", getBookedTimesByDateController);
 
 carWashRouter.get(
