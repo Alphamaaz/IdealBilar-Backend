@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import cors from "cors";
 dotenv.config();
-import cors from 'cors';
+
 
 //Internal modules
 import { userRouter } from "./modules/user/index.js";
@@ -16,6 +16,7 @@ import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
 import { notificationRouter } from './modules/notification/index.js';
+import { saleACarRouter } from "./modules/saleACar/index.js";
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://localhost:5174",
@@ -55,7 +56,7 @@ app.use(cors({
 
 
 //testing websocket api
-app.use('/api/v1', getAdminDataRouter)
+// app.use('/api/v1', getAdminDataRouter)
 
 // User endpoints/URL's
 app.use('/api', userRouter);
@@ -80,9 +81,10 @@ app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
 app.use('/api/v1', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
+app.use('/api/v1', saleACarRouter);
 
 // chat between user and the admin endpoints/URL's
-app.use('/api/v1/', chatRouterHandler) 
+// app.use('/api/v1/', chatRouterHandler) 
 
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({

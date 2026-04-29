@@ -72,6 +72,14 @@ const userRegister = async (userData) => {
       return validationError;
     }
 
+    if (await getUserByEmail(data.email)) {
+      return {
+        success: false,
+        status: 409,
+        message: "User with this email already exists",
+      };
+    }
+
     const hashedPassword = await passwordHashGenerate(data.password);
     data.password = hashedPassword;
 
@@ -271,6 +279,40 @@ const userLogin = async (userData) => {
   }
 };
 
+const myProfile = async (userId) => {
+  try {
+    if (!userId) {
+      return {
+        success: false,
+        status: 401,
+        message: "You are not logged in",
+      };
+    }
+
+    const foundUser = await getUserById(userId);
+
+    if (!foundUser) {
+      return {
+        success: false,
+        status: 404,
+        message: "User not found",
+      };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      data: sanitizeUser(foundUser),
+    };
+  } catch (err) {
+    return {
+      success: false,
+      status: 500,
+      message: err.message,
+    };
+  }
+};
+
 const sendForgotPasswordOTP = async (emailData) => {
   try {
     const { success, error } = emailValidation(emailData);
@@ -343,6 +385,7 @@ const verifyForgotPasswordOTP = async (otpData) => {
         message: "User not found",
       };
     }
+
 
     const validOTP = await findValidUserOTP(
       user._id,
@@ -452,4 +495,5 @@ export {
   verifyForgotPasswordOTP,
   getUserById,
   userResetPassword,
+  myProfile,
 };
