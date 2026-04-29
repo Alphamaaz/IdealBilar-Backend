@@ -17,6 +17,7 @@ import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
 import { notificationRouter } from './modules/notification/index.js';
 import { saleACarRouter } from "./modules/saleACar/index.js";
+import { dashboardRouter } from "./modules/dashboard/index.js";
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://localhost:5174",
@@ -82,6 +83,7 @@ app.use('/api/v1', carWashRouter);
 app.use('/api/v1', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
 app.use('/api/v1', saleACarRouter);
+app.use('/api/v1', dashboardRouter);
 
 // chat between user and the admin endpoints/URL's
 // app.use('/api/v1/', chatRouterHandler) 

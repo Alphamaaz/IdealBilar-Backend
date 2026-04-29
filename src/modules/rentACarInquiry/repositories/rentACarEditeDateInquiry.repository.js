@@ -1,17 +1,15 @@
-// External modules
+// Internal modules
+import RentACarBooking from "../models/rentACarBookingInquery.model.js";
+const updateRentACarDataRepository = async (id, data) => {
+  try {
+    const updatedBooking = await RentACarBooking.findByIdAndUpdate(id, data, { new: true })
+      .populate("userId", "name email role")
+      .populate("carId", "make model year title thumbnail");
+    return updatedBooking;
+  } catch (err) {
+    throw err;
+  }
+};
 
-//Internal modules
-
-const updateRentACarDataRepository = async (rentACarData) => {
-    try{
-     console.log("We are in the update rent a car data repository");
-     
-    }catch(err){
-        throw err;
-    }
-}
-
-//export 
-export {
-    updateRentACarDataRepository
-}
+//export
+export { updateRentACarDataRepository };

@@ -51,7 +51,7 @@ rentACarRouter.delete(
 
 // edite rent a car data endpoint/URL
 rentACarRouter.put(
-  "/update-rent-a-car",
+  "/update-rent-a-car/:id",
   middlewareForVerifyJwtToken,
   rentACarEditeController,
 );
