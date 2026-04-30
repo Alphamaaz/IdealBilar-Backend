@@ -19,10 +19,10 @@ Router.post(
   createCarRentalHandler,
 );
 
-Router.get("/car-rentals", middlewareForVerifyJwtToken, getAllCarRentalsHandler);
+Router.get("/car-rentals", getAllCarRentalsHandler);
 
 // Get a specific car rental by ID
-Router.get('/car-rental/:id', middlewareForVerifyJwtToken,   getCarRentalByIdHandler);
+Router.get('/car-rental/:id',  getCarRentalByIdHandler);
 
 // Update a car rental
 Router.put(
