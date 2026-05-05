@@ -11,7 +11,7 @@ const getTokenFromRequest = (req) => {
   return req.headers.token;
 };
 
-const middlewareForVerifyJwtToken = (req, res, next) => {
+const middlewareForVerifyJwtToken = async (req, res, next) => {
   try {
     const token = getTokenFromRequest(req);
 
@@ -29,6 +29,18 @@ const middlewareForVerifyJwtToken = (req, res, next) => {
     }
 
     req.userId = data;
+    
+    // Fetch user from database to get role
+    const { default: User } = await import('../../modules/user/models/user.model.js');
+    const user = await User.findById(data).select('role');
+    
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, error: "User not found!" });
+    }
+    
+    req.user = user;
     next();
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
