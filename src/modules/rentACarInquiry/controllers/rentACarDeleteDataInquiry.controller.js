@@ -9,7 +9,8 @@ const rentACarDeleteDataController = async (req, res) => {
         const result = await rentACarDataDeleteService(req.params.id);
         res.status(result.status).json({
             success: result.success,
-            message: result.message
+            message: result.message,
+            data: result.data
         });
     }catch(err){
         res.status(500).json({

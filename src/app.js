@@ -20,6 +20,7 @@ import { saleACarRouter } from "./modules/saleACar/index.js";
 import { dashboardRouter } from "./modules/dashboard/index.js";
 import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
 import { queryHistoryRouter } from "./modules/queryHistory/index.js";
+
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://localhost:5174",
@@ -29,33 +30,35 @@ const allowedOrigins = new Set([
 ]);
 
 if (process.env.ALLOWED_ORIGINS) {
-  process.env.ALLOWED_ORIGINS.split(",").forEach(origin => allowedOrigins.add(origin.trim()));
+  process.env.ALLOWED_ORIGINS.split(",").forEach((origin) => {
+    const trimmedOrigin = origin.trim();
+    if (trimmedOrigin) {
+      allowedOrigins.add(trimmedOrigin);
+    }
+  });
 }
+
 const app = express();
+
 app.use(cors({
   origin: (origin, callback) => {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.has(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS blocked for origin: ${origin}`);
-      callback(new Error(`Not allowed by CORS: ${origin}`));
+    if (!origin) {
+      return callback(null, true);
     }
+
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
-  credentials: true
+  credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.resolve("public", "uploads")));
 app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
-
-
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
 
 
 //testing websocket api

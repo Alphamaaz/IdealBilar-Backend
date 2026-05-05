@@ -6,6 +6,7 @@ import { rentACarController as RentACarHandler } from "../controllers/rentACarIn
 import { rentACarFetchingDataForAdminDashboardController } from "../controllers/rentACarFetchingDataForDashooardInquiry.controller.js";
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
+import { filterCarRentalsController } from "../controllers/carRentalFilter.controller.js";
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
@@ -48,6 +49,9 @@ rentACarRouter.delete(
   adminOnlyMiddleware,
   rentACarDeleteDataController,
 );
+
+// Filter car rentals
+rentACarRouter.get('/rental-bookings', middlewareForVerifyJwtToken, adminOnlyMiddleware, filterCarRentalsController);
 
 // edite rent a car data endpoint/URL
 rentACarRouter.put(
