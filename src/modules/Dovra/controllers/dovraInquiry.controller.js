@@ -33,7 +33,7 @@ const createDovraInquiryController = async (req, res) => {
       consent: data.consent,
     };
 
-    const result = await createDovraInquiryService(inquiryPayload);
+    const result = await createDovraInquiryService(inquiryPayload, req.userId);
 
     res.status(201).json({
       success: true,

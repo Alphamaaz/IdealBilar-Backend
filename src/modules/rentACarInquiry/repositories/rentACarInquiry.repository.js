@@ -1,8 +1,6 @@
-// External modules
-
-// Internal modules
-import RentACarBooking from "../models/rentACarBookingInquery.model.js"
+import RentACarBooking from "../models/rentACarBookingInquery.model.js";
 import { notificationServices } from "../../notification/services/notification.service.js";
+import { createChatForInquiryRepository } from "../../chats/repositories/createChatForInquiry.repository.js";
 
 const findOverlappingRentACarBooking = async ({ carId, pickupDate, returnDate }) => {
     try {
@@ -30,6 +28,15 @@ const saveRentACarData = async (rentACarData) => {
         message: `${populatedResult.userId?.name} has inquired about renting a car`,
         model: populatedResult.carId ? `${populatedResult.carId.make} ${populatedResult.carId.model}` : undefined,
         referenceId: result._id,
+      });
+      await createChatForInquiryRepository({
+        inquiryId: result._id,
+        inquiryType: 'rentACarInquiry',
+        user: {
+          id: rentACarData.userId,
+          name: populatedResult.userId?.name || '',
+          email: populatedResult.userId?.email || '',
+        },
       });
       return populatedResult;
     }catch(err){

@@ -1,106 +1,123 @@
-//External modules
-
-//Internal modules
-import Message from "../../models/chatMessage.model.js";
-import Chat from "../../models/chat.model.js";
 import { chatService } from "../../services/sendMessage.service.js";
 import { findChatsService } from "../../services/getActiveChats.service.js";
 import { getActiveChatsService } from "../../services/getChatHistory.service.js";
 import { joinSpecificChatService } from "../../services/joinSpecificChat.service.js";
+import { markMessagesReadRepository } from "../../repositories/markMessagesRead.repository.js";
+import { notificationServices } from "../../../notification/services/notification.service.js";
+import User from "../../../user/models/user.model.js";
+
+const inquiryTypeToNotificationType = {
+  dovra: 'Dovra',
+  buyACar: 'Buy Car',
+  carWash: 'Car Wash',
+  rentACarInquiry: 'Rent a Car',
+};
 
 export const registerChatEvents = async (io, socket) => {
-  //JOIN CHAT ROOM (Simple version for testing)
   socket.on("join_chat", (chatId) => {
-    if (!chatId) {
-      console.error("No chatId provided for join_chat");
-      return;
-    }
-
+    if (!chatId) return;
     socket.join(chatId);
     socket.chatId = chatId;
-    console.log(`Socket ${socket.id} joined chat room: ${chatId}`);
-
-    // Notify room that user joined
     socket.to(chatId).emit("receive_message", {
       sender: "system",
-      message: `User joined the chat`,
+      message: "User joined the chat",
       timestamp: new Date().toISOString(),
-      chatId: chatId,
+      chatId,
     });
   });
 
-  // SEND MESSAGE (Works with both simple and advanced)
   socket.on("send_message", async (data) => {
     try {
-      console.log("Raw message received:", data);
-      const responseData = await chatService(socket, data);
+      const { responseData, chat } = await chatService(socket, data);
 
-      // Emit to everyone in the room (including sender)
       io.to(responseData.chatId).emit("receive_message", responseData);
-
-      // Also emit to sender for confirmation
       socket.emit("message_sent", responseData);
 
-      console.log(
-        `Message sent from ${responseData.sender.type} in chat ${responseData.chatId}`,
-      );
+      // Increment unread counter on chat for the receiver
+      const senderType = responseData.sender?.type;
+      if (senderType === 'user') {
+        const { default: Chat } = await import("../../models/chat.model.js");
+        await Chat.findByIdAndUpdate(responseData.chatId, { $inc: { adminUnreadCount: 1 } });
+      } else {
+        const { default: Chat } = await import("../../models/chat.model.js");
+        await Chat.findByIdAndUpdate(responseData.chatId, { $inc: { userUnreadCount: 1 } });
+      }
+
+      // Create notification for the receiver
+      if (chat?.inquiryType) {
+        const notifType = inquiryTypeToNotificationType[chat.inquiryType] || 'General';
+        const senderName = responseData.sender?.name || 'Someone';
+
+        if (senderType === 'user') {
+          // Notify admin
+          await notificationServices({
+            name: senderName,
+            type: notifType,
+            message: `${senderName} sent a new message`,
+            referenceId: chat._id,
+            recipientType: 'admin',
+          });
+        } else {
+          // Notify user
+          await notificationServices({
+            name: senderName,
+            type: notifType,
+            message: `New message from Admin`,
+            referenceId: chat._id,
+            recipientId: chat.user?.id,
+            recipientType: 'user',
+          });
+        }
+      }
     } catch (error) {
       socket.emit("error", { message: error.message });
     }
   });
 
-  //GET ACTIVE CHATS (For admin dashboard)
   socket.on("get_active_chats", async () => {
     try {
       const chatRooms = await findChatsService();
-
       socket.emit("active_rooms", chatRooms);
-      console.log(`Sent ${chatRooms.length} active chats to admin`);
     } catch (error) {
       console.error("Error getting active chats:", error);
     }
   });
 
-  // GET CHAT HISTORY
   socket.on("get_chat_history", async (data) => {
     try {
-      const { chatId, limit = 50 } = data;
-
+      const { chatId } = data;
       const messages = await getActiveChatsService(chatId);
-
-      socket.emit("chat_history", {
-        chatId: chatId,
-        messages: messages,
-        total: messages.length,
-      });
-
-      console.log(`Sent ${messages.length} messages for chat ${chatId}`);
+      socket.emit("chat_history", { chatId, messages, total: messages.length });
     } catch (error) {
-      console.error("Error getting history:", error);
       socket.emit("error", { message: error.message });
     }
   });
 
-  // JOIN SPECIFIC CHAT ROOM
-  socket.on("join_specific_chat", async (chatId) => {
+  // JOIN SPECIFIC CHAT — sends history and marks existing messages as read for the joining user
+  socket.on("join_specific_chat", async (data) => {
     try {
+      // Accept either a plain chatId string or an object { chatId, userId, userType }
+      const chatId = typeof data === 'string' ? data : data?.chatId;
+      const userId = typeof data === 'object' ? data?.userId : null;
+      const userType = typeof data === 'object' ? data?.userType : null;
+
+      if (!chatId) return;
+
       socket.join(chatId);
       socket.currentChatId = chatId;
-      console.log(`Socket ${socket.id} joined chat: ${chatId}`);
 
-      // Send chat history
       const messages = await joinSpecificChatService(chatId);
+      socket.emit("chat_history", { chatId, messages });
 
-      socket.emit("chat_history", {
-        chatId: chatId,
-        messages: messages,
-      });
+      // Mark messages as read for the joining user if userId provided
+      if (userId && userType) {
+        await markMessagesReadRepository(chatId, userId, userType);
+      }
     } catch (error) {
       console.error("Error joining chat:", error);
     }
   });
 
-  //Disconnect handler
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
   });

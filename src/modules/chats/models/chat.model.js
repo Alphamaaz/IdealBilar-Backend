@@ -51,11 +51,16 @@
 // export default mongoose.model("Chat", chatSchema);
 
 
-// models/chat.model.js
 import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
-  _id: { type: String, required: true }, // Allow string IDs
+  _id: { type: String, required: true },
+  inquiryType: {
+    type: String,
+    enum: ['dovra', 'buyACar', 'carWash', 'rentACarInquiry'],
+    required: true
+  },
+  inquiryId: { type: String, required: true },
   user: {
     id: String,
     name: String,
@@ -71,7 +76,12 @@ const chatSchema = new mongoose.Schema({
   lastMessage: String,
   lastMessageAt: Date,
   lastMessageSender: String,
+  userUnreadCount: { type: Number, default: 0 },
+  adminUnreadCount: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
+
+chatSchema.index({ inquiryType: 1, isActive: 1 });
+chatSchema.index({ 'user.id': 1 });
 
 export default mongoose.model("Chat", chatSchema);

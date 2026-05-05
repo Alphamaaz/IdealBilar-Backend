@@ -66,6 +66,10 @@ const dovraInquirySchema = new mongoose.Schema(
       enum: ["pending", "contacted", "closed"],
       default: "pending",
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
