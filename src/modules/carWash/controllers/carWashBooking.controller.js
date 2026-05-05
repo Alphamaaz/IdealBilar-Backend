@@ -20,7 +20,7 @@ const createCarWashBookingController = async (req, res) => {
       return settingResponse(res, validationError);
     }
 
-    const result = await createCarWashBookingService(data);
+    const result = await createCarWashBookingService(data, req.userId);
     res.status(result.status).json(result);
   } catch (error) {
     res.status(500).json({

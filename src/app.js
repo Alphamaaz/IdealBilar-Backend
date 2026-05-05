@@ -3,7 +3,7 @@ import express from 'express';
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config();
-import cors from 'cors';
+
 
 //Internal modules
 import { userRouter } from "./modules/user/index.js";
@@ -15,6 +15,17 @@ import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
 import { notificationRouter } from './modules/notification/index.js';
+import { saleACarRouter } from "./modules/saleACar/index.js";
+import { dashboardRouter } from "./modules/dashboard/index.js";
+import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
+import { queryHistoryRouter } from "./modules/queryHistory/index.js";
+const allowedOrigins = new Set([
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3001",
+  "http://localhost:3000",
+  "http://31.97.77.215" // Added based on user screenshot
+]);
 
 
   const app = express();
@@ -25,6 +36,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.resolve("public", "uploads")));
 app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
 
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
+
+
+//testing websocket api
+// app.use('/api/v1', getAdminDataRouter)
 
 // User endpoints/URL's
 app.use('/api', userRouter);
@@ -49,6 +69,12 @@ app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
 app.use('/api/v1', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
+app.use('/api/v1', saleACarRouter);
+app.use('/api/v1', dashboardRouter);
+app.use('/api/v1', queryHistoryRouter);
+
+// Chat endpoints
+app.use('/api/v1', chatRouterHandler);
 
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({

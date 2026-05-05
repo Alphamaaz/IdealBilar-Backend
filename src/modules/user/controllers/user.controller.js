@@ -44,6 +44,18 @@ const userLoginController = async (req, res) => {
   }
 };
 
+const myProfileController = async (req, res) => {
+  try {
+    const result = await userService.myProfile(req.userId);
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
 const resendEmailVerificationOTPController = async (req, res) => {
   try {
     const result = await userService.resendEmailVerificationOTP(req.body);
@@ -112,5 +124,7 @@ export {
   verifyEmailOTPController,
   forgotPasswordRequestOTPController,
   forgotPasswordVerifyOTPController,
-  userResetPasswordController
+  userResetPasswordController,
+  myProfileController,
 };
+

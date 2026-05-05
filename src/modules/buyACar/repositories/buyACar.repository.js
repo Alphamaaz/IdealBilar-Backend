@@ -1,12 +1,10 @@
-//External modules
-
-//Internal modules
 import { BuyACar } from "../models/buyACar.model.js";
 import { notificationServices } from "../../notification/services/notification.service.js";
+import { createChatForInquiryRepository } from "../../chats/repositories/createChatForInquiry.repository.js";
 
 const buyACarRepository = async (buyACarData) => {
-    try{
-        const result = (await BuyACar.create(buyACarData)).populate("userId", "name email -_id");
+    try {
+        const result = await BuyACar.create(buyACarData);
         await notificationServices({
             name: buyACarData.name,
             type: "Buy Car",
@@ -14,8 +12,17 @@ const buyACarRepository = async (buyACarData) => {
             model: buyACarData.subject,
             referenceId: result._id,
         });
+        await createChatForInquiryRepository({
+            inquiryId: result._id,
+            inquiryType: 'buyACar',
+            user: {
+                id: buyACarData.userId,
+                name: buyACarData.name,
+                email: '',
+            },
+        });
         return result;
-    }catch(err){
+    } catch (err) {
         throw err;
     }
 }

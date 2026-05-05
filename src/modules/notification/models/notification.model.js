@@ -25,6 +25,14 @@ const notificationSchema = new mongoose.Schema(
     referenceId: {
       type: mongoose.Schema.Types.ObjectId,
     },
+    recipientId: {
+      type: String,
+    },
+    recipientType: {
+      type: String,
+      enum: ['admin', 'user'],
+      default: 'admin',
+    },
     isRead: {
       type: Boolean,
       default: false,

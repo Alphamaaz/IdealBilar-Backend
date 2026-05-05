@@ -1,14 +1,24 @@
 import CarWashBooking from "../models/carWashBooking.model.js";
 import { notificationServices } from "../../notification/services/notification.service.js";
+import { createChatForInquiryRepository } from "../../chats/repositories/createChatForInquiry.repository.js";
 
-const createCarWashBookingRepository = async (bookingData) => {
-  const result = await CarWashBooking.create(bookingData);
+const createCarWashBookingRepository = async (bookingData, userId) => {
+  const result = await CarWashBooking.create({ ...bookingData, userId });
   await notificationServices({
     name: bookingData.firstName,
     type: "Car Wash",
     message: `${bookingData.firstName} ${bookingData.lastName} has inquired about Car Wash`,
     model: bookingData.carBrandAndModel,
     referenceId: result._id,
+  });
+  await createChatForInquiryRepository({
+    inquiryId: result._id,
+    inquiryType: 'carWash',
+    user: {
+      id: userId,
+      name: `${bookingData.firstName} ${bookingData.lastName}`,
+      email: bookingData.email,
+    },
   });
   return result;
 };
