@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { app } from "./src/app.js";
 import connectDB from "./src/database/db.js";
 import { socketHandler } from './src/modules/chats/sockets/chat.socket.js';
+import { config } from "./src/shared/config/config.js";
 
 
 //Create server explicitly
@@ -15,7 +16,7 @@ const server = http.createServer(app);
 //Attach socket.io to the same server 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: config.socketIOCorsOrigin,
     method: ['GET','POST'],
   }
 })

@@ -59,7 +59,6 @@ const chatService = async (socket, data = {}) => {
 
     const updateChat = await upateChatRepository(finalChatId, message, saveMessage.sender) 
 
-    // Prepare response data
     const responseData = {
       _id: saveMessage._id,
       chatId: finalChatId,
@@ -70,7 +69,7 @@ const chatService = async (socket, data = {}) => {
       status: "sent",
     };
 
-    return responseData;
+    return { responseData, chat };
   } catch (error) {
     throw error;
   }

@@ -4,8 +4,8 @@ import {
   getAllDovraInquiriesRepository,
 } from "../repositories/dovraInquiry.repository.js";
 
-const createDovraInquiryService = async (inquiryData) => {
-  const result = await createDovraInquiryRepository(inquiryData);
+const createDovraInquiryService = async (inquiryData, userId) => {
+  const result = await createDovraInquiryRepository(inquiryData, userId);
   return result;
 };
 

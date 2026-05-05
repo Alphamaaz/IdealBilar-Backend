@@ -92,6 +92,38 @@ const deleteAllNotificationService = async () => {
     }
 }
 
+const getUserNotificationsService = async (userId) => {
+    try {
+        const notifications = await Notification.find({ recipientId: userId, recipientType: 'user' })
+            .sort({ createdAt: -1 });
+        return notifications;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getUserNotificationsCountService = async (userId) => {
+    try {
+        const count = await Notification.countDocuments({ recipientId: userId, recipientType: 'user', isRead: false });
+        return count;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const markUserNotificationAsReadService = async (id, userId) => {
+    try {
+        const notification = await Notification.findOneAndUpdate(
+            { _id: id, recipientId: userId, recipientType: 'user' },
+            { isRead: true },
+            { new: true }
+        );
+        return notification;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     notificationServices,
     getAllNotificationServices,
@@ -102,4 +134,7 @@ export {
     markAllAsReadService,
     getNotificationsCountService,
     deleteAllNotificationService,
+    getUserNotificationsService,
+    getUserNotificationsCountService,
+    markUserNotificationAsReadService,
 };

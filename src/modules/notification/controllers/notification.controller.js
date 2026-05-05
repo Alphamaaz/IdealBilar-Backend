@@ -8,6 +8,9 @@ import {
     markAllAsReadService,
     getNotificationsCountService,
     deleteAllNotificationService,
+    getUserNotificationsService,
+    getUserNotificationsCountService,
+    markUserNotificationAsReadService,
 } from "../services/notification.service.js";
 
 const notificationController = async (req, res) => {
@@ -164,4 +167,34 @@ const getNotificationsCountController = async (req, res) => {
     }
 }
 
-export { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController, getNotificationsCountController, deleteAllNotificationController };
+const getUserNotificationsController = async (req, res) => {
+    try {
+        const notifications = await getUserNotificationsService(req.userId);
+        res.status(200).json({ success: true, message: "Notifications fetched", data: notifications });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getUserNotificationsCountController = async (req, res) => {
+    try {
+        const count = await getUserNotificationsCountService(req.userId);
+        res.status(200).json({ success: true, data: { count } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const markUserNotificationAsReadController = async (req, res) => {
+    try {
+        const notification = await markUserNotificationAsReadService(req.params.id, req.userId);
+        if (!notification) {
+            return res.status(404).json({ success: false, message: "Notification not found" });
+        }
+        res.status(200).json({ success: true, message: "Notification marked as read", data: notification });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export { notificationController, getAllNotificationController, getSingleNotificationController, updateNotificationController, deleteNotificationController, markAsReadController, markAllAsReadController, getNotificationsCountController, deleteAllNotificationController, getUserNotificationsController, getUserNotificationsCountController, markUserNotificationAsReadController };

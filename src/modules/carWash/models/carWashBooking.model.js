@@ -69,6 +69,10 @@ const carWashBookingSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "completed", "cancelled"],
       default: "pending",
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
