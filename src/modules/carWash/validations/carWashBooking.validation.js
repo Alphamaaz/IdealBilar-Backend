@@ -18,6 +18,12 @@ const carWashBookingValidationSchema = z.object({
   phoneNumber: z.string().regex(/^[+0-9()\-\s]{7,20}$/, "Invalid phone number"),
   carBrandAndModel: z.string().min(2).max(150),
   message: z.string().max(1000).optional().default(""),
+  extraServices: z.array(
+    z.object({
+      serviceName: z.string().min(1).max(100),
+      price: z.coerce.number().min(0),
+    })
+  ).optional().default([]),
 });
 
 const bookingDateLookupValidationSchema = z.object({

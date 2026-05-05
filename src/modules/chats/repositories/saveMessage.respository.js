@@ -4,15 +4,11 @@
 import Message from '../models/chatMessage.model.js';
 const saveMessageInDBRepository = async (ids, currentUser, chat, userType, message) => {
     try {
-        
-         // Determine sender info
       let senderInfo;
       let receiverInfo;
       
-      // Check if sender is admin (has AdminId) or user
       if (ids.AdminId || userType === 'admin') {
-        // Admin sending message
-        const adminId = ids.AdminId || userId;
+        const adminId = ids.AdminId || ids.userId || currentUser.id || 'admin_default';
         senderInfo = {
           id: adminId,
           type: 'admin',
@@ -24,7 +20,6 @@ const saveMessageInDBRepository = async (ids, currentUser, chat, userType, messa
           name: chat.user?.name || 'User'
         };
       } else {
-        // User sending message
         senderInfo = {
           id: ids.clientUserId || ids.userId || ids.socket.id,
           type: 'user',
@@ -37,7 +32,6 @@ const saveMessageInDBRepository = async (ids, currentUser, chat, userType, messa
         };
       }
       
-      // Save message to database
       const messageData = new Message({
         chatId: ids.finalChatId,
         sender: senderInfo,
@@ -45,13 +39,8 @@ const saveMessageInDBRepository = async (ids, currentUser, chat, userType, messa
         message: message,
         status: 'sent'
       });
-
-    //   console.log("We are in the save message in DB Repository check sender info ", senderInfo );
-    //   console.log("We are in the save message in DB Repository check reciver info ", receiverInfo);
       
       const savedMessage = await messageData.save();
-      
-    //   console.log("Message saved to DB:", savedMessage._id);
      
       return savedMessage;
     } catch (error) {

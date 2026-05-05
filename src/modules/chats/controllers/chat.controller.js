@@ -1,6 +1,9 @@
 import { getInquiryChatService } from '../services/getInquiryChat.service.js';
 import { getAdminChatsService, getUserChatsService } from '../services/getAdminChats.service.js';
 import { markMessagesReadService } from '../services/markMessagesRead.service.js';
+import { getTotalUnreadCountService } from '../services/getTotalUnreadCount.service.js';
+import { debugUnreadCountService } from '../services/debugUnreadCount.service.js';
+import { debugChatMessagesService } from '../services/debugChatMessages.service.js';
 import Chat from '../models/chat.model.js';
 
 // GET /api/v1/chat/inquiry/:inquiryId
@@ -121,4 +124,57 @@ const markChatAsReadController = async (req, res) => {
   }
 };
 
-export { getInquiryChatController, getAdminChatsController, getUserChatsController, markChatAsReadController };
+// GET /api/v1/chats/unread-count
+const getTotalUnreadCountController = async (req, res) => {
+  try {
+    const userType = req.user?.role === 'admin' ? 'admin' : 'user';
+    const totalUnreadCount = await getTotalUnreadCountService(req.userId, userType);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalUnreadCount
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GET /api/v1/chats/unread-count/debug (Admin only - for debugging)
+const debugUnreadCountController = async (req, res) => {
+  try {
+    const userType = req.user?.role === 'admin' ? 'admin' : 'user';
+    
+    if (userType !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Admin access required' });
+    }
+
+    const debugData = await debugUnreadCountService(req.userId, userType);
+
+    return res.status(200).json({
+      success: true,
+      data: debugData
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GET /api/v1/chats/:chatId/debug (Debug specific chat messages)
+const debugChatMessagesController = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    
+    const debugData = await debugChatMessagesService(chatId, req.userId);
+
+    return res.status(200).json({
+      success: true,
+      data: debugData
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { getInquiryChatController, getAdminChatsController, getUserChatsController, markChatAsReadController, getTotalUnreadCountController, debugUnreadCountController, debugChatMessagesController };

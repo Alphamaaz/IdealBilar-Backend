@@ -73,6 +73,20 @@ const carWashBookingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    extraServices: [
+      {
+        serviceName: {  
+          type: String,
+          required: true,
+          trim: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    
   },
   {
     timestamps: true,
