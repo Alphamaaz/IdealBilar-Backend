@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema({
       delete ret.password;
       return ret;
     }
+  },
+  toObject: {
+    
   }
 });
 

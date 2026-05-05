@@ -62,10 +62,9 @@ const issueAndSendOTP = async (user, purpose) => {
 
 // User Registration service
 const userRegister = async (userData) => {
-  console.log("Registering user with data:", JSON.stringify(userData, null, 2));
+  // console.log("Registering user with data:", JSON.stringify(userData, null, 2));
   try {
     const { success, data, error } = userRegisterationValidation(userData);
-    console.log("We are in the user register service ", data);
     
     if (!success) {
       const validationError = settingErrorStatusAndMessage(error);
@@ -234,7 +233,7 @@ const userLogin = async (userData) => {
       return validationErrors;
     }
     const user = await getUserByEmail(data.email, true);
-
+    
     if (!user) {
       const error = new Error("User not found");
       error.status = 404;

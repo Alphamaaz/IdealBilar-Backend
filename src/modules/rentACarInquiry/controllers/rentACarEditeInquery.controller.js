@@ -1,8 +1,8 @@
 //External modules
 
-import { updateRentACarService } from "../services/updateRentACarDataInquiry.service.js";
 
 //Internal modules
+import { updateRentACarService } from "../services/updateRentACarDataInquiry.service.js";
 
 const rentACarEditeController = async (req, res) =>{
     try{

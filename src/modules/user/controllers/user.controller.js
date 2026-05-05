@@ -33,6 +33,8 @@ const userRegisterController = async (req, res) => {
 const userLoginController = async (req, res) => {
   try {
     const result = await userService.userLogin(req.body);
+    console.log("We are in the user login controller ", result);
+    
     return handleServiceResult(res, result);
   } catch (err) {
     res.status(500).json({

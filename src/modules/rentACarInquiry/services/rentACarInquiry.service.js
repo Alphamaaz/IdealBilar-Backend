@@ -9,8 +9,12 @@ import {
 const formatDate = (date) => new Date(date).toISOString().split("T")[0];
 
 const rentACarService = async (rentACarData) => {
+  console.log("Check the rentACarID ", rentACarData);
+  
     try{
       const rentalCar = await RentalCar.findById(rentACarData.carId);
+      console.log("Check the rental car ", rentalCar);
+      
 
       if (!rentalCar) {
         return {
