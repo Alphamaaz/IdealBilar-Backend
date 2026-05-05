@@ -14,6 +14,10 @@ const rentACarBookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    phone: {
+      type: String,
+      required: true,
+    },
     licenseImage: {
       type: String,
       required: true,
@@ -39,6 +43,11 @@ const rentACarBookingSchema = new mongoose.Schema(
     totalRent: {
       type: Number,
       required: true,
+    },
+      status: {
+      type: String,
+      enum: ["upcoming", "in-progress", "completed", "cancelled"],
+      default: "upcoming",
     },
   },
   {

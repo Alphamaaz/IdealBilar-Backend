@@ -21,6 +21,8 @@ const rentACarValidationSchema = z.object({
 
   pickupDate: dateSchema,
   returnDate: dateSchema,
+  phone: z.string().min(10).max(15, "Invalid phone number"),
+  
 
   perDayRent: z.coerce.number().min(0, "Per day rent must be >= 0"),
 
