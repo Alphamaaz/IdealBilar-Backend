@@ -6,14 +6,10 @@ import { rentACarController as RentACarHandler } from "../controllers/rentACarIn
 import { rentACarFetchingDataForAdminDashboardController } from "../controllers/rentACarFetchingDataForDashooardInquiry.controller.js";
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
-<<<<<<< HEAD
-import {  middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
-=======
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
->>>>>>> cf1fdd0e1ea9a17afe2798264513e0803ec76600
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
-
+import { filterCarRentalsController } from "../controllers/carRentalFilter.controller.js";
 const rentACarRouter = express.Router();
 
 const uploadLicenseImage = (req, res, next) => {
@@ -52,6 +48,9 @@ rentACarRouter.delete(
   adminOnlyMiddleware,
   rentACarDeleteDataController,
 );
+
+// Filter car rentals
+rentACarRouter.get('/rental-bookings', middlewareForVerifyJwtToken, adminOnlyMiddleware, filterCarRentalsController);
 
 // edite rent a car data endpoint/URL
 rentACarRouter.put(

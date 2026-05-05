@@ -4,10 +4,16 @@ import { updateRentACarDataRepository } from "../repositories/rentACarEditeDateI
 
 // Internal modules
 
-const updateRentACarService = async (rentACarData) => {
+const updateRentACarService = async (rentACarId, rentACarData) => {
     try{
       console.log("We are in the update rent a car service");
-      updateRentACarDataRepository(rentACarData);
+      const updatedRentACar = await updateRentACarDataRepository(rentACarId, rentACarData);
+      return {
+        success: true,
+        status: 200,
+        message: "Rent a car data updated successfully",
+        data: updatedRentACar
+      };
     }catch(err){
         throw err;
     }

@@ -1,16 +1,17 @@
 //External modules
 
-import { updateRentACarService } from "../services/updateRentACarDataInquiry.service.js";
 
 //Internal modules
+import { updateRentACarService } from "../services/updateRentACarDataInquiry.service.js";
 
 const rentACarEditeController = async (req, res) =>{
     try{
-        updateRentACarService("hksjdksjd");
-        res.status(200).json({
-            success: true,
-            message: "Reached to the rent a car edite controller!"
-        })
+        const result = await updateRentACarService(req.params.id, req.body);
+        res.status(result.status).json({
+            success: result.success,
+            message: result.message,
+            data: result.data
+        });
     }catch(err){
         throw err;
     }

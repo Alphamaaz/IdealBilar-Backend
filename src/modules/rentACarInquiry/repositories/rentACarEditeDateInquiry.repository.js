@@ -2,7 +2,7 @@
 
 //Internal modules
 
-const updateRentACarDataRepository = async (rentACarData) => {
+const updateRentACarDataRepository = async (rentACarId, rentACarData) => {
     try{
      console.log("We are in the update rent a car data repository");
      
