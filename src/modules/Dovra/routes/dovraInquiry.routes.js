@@ -9,7 +9,11 @@ import {
 
 const dovraInquiryRouter = express.Router();
 
-dovraInquiryRouter.post("/dovra-inquiry", createDovraInquiryController);
+dovraInquiryRouter.post(
+  "/dovra-inquiry",
+  middlewareForVerifyJwtToken,
+  createDovraInquiryController,
+);
 
 dovraInquiryRouter.get(
   "/dovra-inquiries",

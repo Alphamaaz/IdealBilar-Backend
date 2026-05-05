@@ -6,7 +6,7 @@ import {
   getBookedTimesByDateRepository,
 } from "../repositories/carWashBooking.repository.js";
 
-const createCarWashBookingService = async (bookingData) => {
+const createCarWashBookingService = async (bookingData, userId) => {
   const existingSlot = await findBookedCarWashSlotRepository({
     bookingDate: bookingData.bookingDate,
     bookingTime: bookingData.bookingTime,
@@ -20,7 +20,7 @@ const createCarWashBookingService = async (bookingData) => {
     };
   }
 
-  const result = await createCarWashBookingRepository(bookingData);
+  const result = await createCarWashBookingRepository(bookingData, userId);
 
   return {
     success: true,

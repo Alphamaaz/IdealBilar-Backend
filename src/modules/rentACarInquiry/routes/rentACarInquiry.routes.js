@@ -7,9 +7,9 @@ import { rentACarFetchingDataForAdminDashboardController } from "../controllers/
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
-import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
-import { filterCarRentalsController } from "../controllers/carRentalFilter.controller.js";
+import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
+
 const rentACarRouter = express.Router();
 
 const uploadLicenseImage = (req, res, next) => {
@@ -54,7 +54,7 @@ rentACarRouter.get('/rental-bookings', middlewareForVerifyJwtToken, adminOnlyMid
 
 // edite rent a car data endpoint/URL
 rentACarRouter.put(
-  "/update-rent-a-car",
+  "/update-rent-a-car/:id",
   middlewareForVerifyJwtToken,
   rentACarEditeController,
 );
