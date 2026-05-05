@@ -4,6 +4,8 @@ import { rentACarDataValidationFunction } from "../validations/rentACarInquiry.v
 import { normalizeDate } from "../../../shared/utils/normalizeToDateOnlyUTC.js";
 
 const rentACarController = async (req, res) => {
+  console.log("We are in the rent a car controller ", req.body);
+  
   try {
     if (!req.file) {
       return res.status(400).json({

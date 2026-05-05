@@ -8,6 +8,10 @@ import {
   getBookedTimesByDateController,
 } from "../controllers/carWashBooking.controller.js";
 
+import { filterCarWashController } from "../controllers/filterCarWash.controller.js";
+
+import { updateCarWashStatusController } from "../controllers/updateCarWashStatus.controller.js";
+
 const carWashRouter = express.Router();
 
 carWashRouter.post("/car-wash-booking", createCarWashBookingController);
@@ -27,4 +31,22 @@ carWashRouter.delete(
   deleteCarWashBookingController,
 );
 
+// Update car wash booking status
+carWashRouter.put(
+  "/car-wash-booking/:id/status",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  updateCarWashStatusController
+);
+
+
+// Api for filter car wash bookings
+carWashRouter.get(
+  "/car-wash-bookings/filter",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  filterCarWashController
+);
+
+// Export the router
 export default carWashRouter;

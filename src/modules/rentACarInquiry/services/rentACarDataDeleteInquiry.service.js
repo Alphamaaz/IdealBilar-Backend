@@ -11,7 +11,7 @@ const rentACarDataDeleteService = async (rentACarId) => {
             return {
                 success: false,
                 status: 404,
-                message: "Rent a car inquiry not found",
+                message: "The rent a car inquiry with the provided ID was not found",
             };
         }
 

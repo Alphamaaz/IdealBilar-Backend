@@ -6,8 +6,9 @@ import settingResponse from "../../../shared/utils/settingResponse.js";
 // middleware for authenticate user, when he/she/other forget their password
 const authenticateUserForForgetPassword = async (req, res, next) => {
   try {
+    console.log("We are in the jwt verifying middleware ");
     const result = await userService.userData(req.body);
-
+    
     if (result instanceof Error) {
       return settingResponse(res, result);
     }

@@ -2,7 +2,6 @@
 import express from 'express';
 import dotenv from "dotenv";
 import path from "path";
-import cors from "cors";
 dotenv.config();
 import cors from 'cors';
 
@@ -16,46 +15,16 @@ import rentACarRouter from './modules/rentACarInquiry/index.js'
 import { buyACarhandler } from './modules/buyACar/routes/buyACar.routes.js';
 import { workshopServicesRouter } from './modules/workshopServices/index.js';
 import { notificationRouter } from './modules/notification/index.js';
-const allowedOrigins = new Set([
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:3001",
-  "http://localhost:3000",
-  "http://31.97.77.215" // Added based on user screenshot
-]);
 
-if (process.env.ALLOWED_ORIGINS) {
-  process.env.ALLOWED_ORIGINS.split(",").forEach(origin => allowedOrigins.add(origin.trim()));
-}
-const app = express();
-app.use(cors({
-  origin: (origin, callback) => {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.has(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS blocked for origin: ${origin}`);
-      callback(new Error(`Not allowed by CORS: ${origin}`));
-    }
-  },
-  credentials: true
-}));
+
+  const app = express();
+  app.use(cors())
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.resolve("public", "uploads")));
 app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
 
-
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
-
-
-//testing websocket api
-app.use('/api/v1', getAdminDataRouter)
 
 // User endpoints/URL's
 app.use('/api', userRouter);
@@ -80,9 +49,6 @@ app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
 app.use('/api/v1', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
-
-// chat between user and the admin endpoints/URL's
-app.use('/api/v1/', chatRouterHandler) 
 
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
