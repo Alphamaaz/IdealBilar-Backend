@@ -69,6 +69,30 @@ export const getAllQueriesController = async (req, res) => {
   }
 };
 
+// Get unified bookings/orders history for authenticated user
+export const getOrdersHistoryController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { page = 1, limit = 10, bookingType = "all", status = null } = req.query;
+
+    const options = {
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10),
+      bookingType,
+      status,
+    };
+
+    const result = await queryHistoryService.getUserOrdersHistory(userId, options);
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch order history",
+      error: err.message,
+    });
+  }
+};
+
 // Clear all query history
 export const clearHistoryController = async (req, res) => {
   try {

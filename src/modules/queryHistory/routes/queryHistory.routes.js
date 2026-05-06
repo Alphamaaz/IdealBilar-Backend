@@ -2,6 +2,7 @@ import express from "express";
 import {
   recordQueryController,
   getAllQueriesController,
+  getOrdersHistoryController,
   clearHistoryController,
   deleteQueryRecordController,
   getQueryRecordController,
@@ -19,9 +20,16 @@ Router.post(
   recordQueryController
 );
 
-// Get all queries for authenticated user
+// Get orders/bookings history for authenticated user
 Router.get(
   "/query-history",
+  middlewareForVerifyJwtToken,
+  getOrdersHistoryController
+);
+
+// Get raw query logs for authenticated user
+Router.get(
+  "/query-history/logs",
   middlewareForVerifyJwtToken,
   getAllQueriesController
 );
