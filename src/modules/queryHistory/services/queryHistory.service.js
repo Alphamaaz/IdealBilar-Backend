@@ -67,6 +67,31 @@ export const getAllUserQueries = async (userId, options) => {
   }
 };
 
+export const getUserOrdersHistory = async (userId, options) => {
+  try {
+    const result = await queryHistoryRepository.getUserBookingHistory(userId, options);
+
+    return {
+      success: true,
+      status: 200,
+      message: result.records.length
+        ? "Order history retrieved successfully"
+        : "No order history found",
+      data: result.records,
+      pagination: result.pagination,
+      summary: result.summary,
+    };
+  } catch (error) {
+    console.error("Error fetching order history:", error);
+    return {
+      success: false,
+      status: 500,
+      message: "Failed to fetch order history",
+      error: error.message,
+    };
+  }
+};
+
 // Clear all user query history
 export const clearAllQueryHistory = async (userId) => {
   try {
