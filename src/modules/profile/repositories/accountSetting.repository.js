@@ -2,6 +2,7 @@
 
 //Internal modules
 import User from '../../user/models/user.model.js'
+
 const accountSettingRepository = async (userId, userData) => {
     try {
         const result = await User.findByIdAndUpdate(
