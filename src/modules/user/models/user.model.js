@@ -1,10 +1,16 @@
 //External modules
 import mongoose from "mongoose";
+import { optional } from "zod";
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
+  },
+  phoneNumber: {
+    type: Number,
+    optional: true,
+    default: null
   },
   email: {
     type: String,
@@ -14,7 +20,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false
+    // select: false
   },
   role: {
     type: String,
