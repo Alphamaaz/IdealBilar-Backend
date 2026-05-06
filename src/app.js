@@ -21,6 +21,9 @@ import { dashboardRouter } from "./modules/dashboard/index.js";
 import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
 import { queryHistoryRouter } from "./modules/queryHistory/index.js";
 
+//Profile module import
+import { ProfileHandle } from './modules/profile/index.js';
+
 const allowedOrigins = new Set([
   "http://localhost:5173",
   "http://localhost:5174",
@@ -61,8 +64,6 @@ app.use("/uploads", express.static(path.resolve("public", "uploads")));
 app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
 
 
-//testing websocket api
-// app.use('/api/v1', getAdminDataRouter)
 
 // User endpoints/URL's
 app.use('/api', userRouter);
@@ -93,6 +94,10 @@ app.use('/api/v1', queryHistoryRouter);
 
 // Chat endpoints
 app.use('/api/v1', chatRouterHandler);
+
+
+// Profie endpoints
+app.use('/api/v1', ProfileHandle)
 
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
