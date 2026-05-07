@@ -1,6 +1,7 @@
 // Internal modules
 import * as queryHistoryRepository from "../repositories/queryHistory.repository.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
+import { de } from "zod/locales";
 
 // Create a new query history record
 export const recordQuery = async (userId, queryData) => {
@@ -105,10 +106,10 @@ export const deleteQueryRecord = async (queryId) => {
     }
 
     return {
-      success: true,
+      success: deletedRecord.deleted,
       status: 200,
-      message: "Query record deleted successfully",
-      data: deletedRecord,
+      message: deletedRecord.message,
+      data: { queryId: deletedRecord.queryId },
     };
   } catch (error) {
     console.error("Error deleting query record:", error);

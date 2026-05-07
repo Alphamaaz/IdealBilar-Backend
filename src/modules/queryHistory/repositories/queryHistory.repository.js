@@ -207,8 +207,12 @@ export const deleteUserQueryHistory = async (userId) => {
 // Delete specific query record
 export const deleteQueryHistoryRecord = async (queryId) => {
   try {
-    const result = await QueryHistory.findByIdAndDelete(queryId);
-    return result;
+    const result = await QueryHistory.findByIdAndDelete(queryId)
+    return {
+      deleted: result ? true : false,
+      queryId: result ? result._id : null,
+      message: result ? "Query history record deleted successfully." : "Query history record not found."
+    };
   } catch (error) {
     throw error;
   }
