@@ -29,7 +29,9 @@ const allowedOrigins = new Set([
   "http://localhost:5174",
   "http://localhost:3001",
   "http://localhost:3000",
-  "http://31.97.77.215" // Added based on user screenshot
+  "http://31.97.77.215",
+  "https://ideal-bilar-site.vercel.app",
+  "https://idealbilar-dashboard.vercel.app"
 ]);
 
 if (process.env.ALLOWED_ORIGINS) {
