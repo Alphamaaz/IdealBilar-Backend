@@ -1,7 +1,7 @@
 // Internal modules
 import * as queryHistoryRepository from "../repositories/queryHistory.repository.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
-import { de } from "zod/locales";
+import { default as User } from "../../user/models/user.model.js";
 
 // Create a new query history record
 export const recordQuery = async (userId, queryData) => {
@@ -63,6 +63,35 @@ export const getAllUserQueries = async (userId, options) => {
       success: false,
       status: 500,
       message: "Failed to fetch query history",
+      error: error.message,
+    };
+  }
+};
+
+export const getUserOrdersHistory = async (userId, options) => {
+  try {
+    // Fetch user email
+    const user = await User.findById(userId).lean();
+    const userEmail = user?.email || null;
+
+    const result = await queryHistoryRepository.getUserBookingHistory(userId, userEmail, options);
+
+    return {
+      success: true,
+      status: 200,
+      message: result.records.length
+        ? "Order history retrieved successfully"
+        : "No order history found",
+      data: result.records,
+      pagination: result.pagination,
+      summary: result.summary,
+    };
+  } catch (error) {
+    console.error("Error fetching order history:", error);
+    return {
+      success: false,
+      status: 500,
+      message: "Failed to fetch order history",
       error: error.message,
     };
   }
