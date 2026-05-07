@@ -1,6 +1,7 @@
 // Internal modules
 import * as queryHistoryRepository from "../repositories/queryHistory.repository.js";
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
+import { default as User } from "../../user/models/user.model.js";
 
 // Create a new query history record
 export const recordQuery = async (userId, queryData) => {
@@ -69,7 +70,11 @@ export const getAllUserQueries = async (userId, options) => {
 
 export const getUserOrdersHistory = async (userId, options) => {
   try {
-    const result = await queryHistoryRepository.getUserBookingHistory(userId, options);
+    // Fetch user email
+    const user = await User.findById(userId).lean();
+    const userEmail = user?.email || null;
+
+    const result = await queryHistoryRepository.getUserBookingHistory(userId, userEmail, options);
 
     return {
       success: true,
