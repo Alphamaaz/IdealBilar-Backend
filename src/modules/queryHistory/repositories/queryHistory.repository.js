@@ -2,6 +2,9 @@
 import QueryHistory from "../models/queryHistory.model.js";
 import CarWashBooking from "../../carWash/models/carWashBooking.model.js";
 import RentACarBooking from "../../rentACarInquiry/models/rentACarBookingInquery.model.js";
+import DovraInquiry from "../../Dovra/models/dovraInquiry.model.js";
+import { BuyACar } from "../../buyACar/models/buyACar.model.js";
+import Chat from "../../chats/models/chat.model.js";
 
 // Create a new query history record
 export const createQueryHistory = async (queryData) => {
@@ -64,15 +67,115 @@ const normalizePagination = (value, fallback) => {
 };
 
 const formatCurrencyAmount = (value, currency = "SEK") => ({
-  value: value ?? 0,
-  currency,
-  display: `${currency} ${(value ?? 0).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`,
+  value: value ?? null,
+  currency: value == null ? null : currency,
+  display:
+    value == null
+      ? null
+      : `${currency} ${value.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`,
 });
 
 const buildReference = (prefix, id) => `${prefix}-${id.toString().slice(-6).toUpperCase()}`;
+
+const normalizeStatusFilter = (status) => {
+  if (!status || typeof status !== "string") {
+    return null;
+  }
+
+  return status.trim().toLowerCase();
+};
+
+const mapRequestedStatusToRentStatuses = (status) => {
+  if (!status) return null;
+  return [status];
+};
+
+const mapRequestedStatusToCarWashStatuses = (status) => {
+  if (!status) return null;
+
+  switch (status) {
+    case "upcoming":
+      return ["pending", "confirmed"];
+    case "completed":
+      return ["completed"];
+    case "cancelled":
+      return ["cancelled"];
+    case "pending":
+      return ["pending"];
+    case "confirmed":
+      return ["confirmed"];
+    default:
+      return [status];
+  }
+};
+
+const mapRequestedStatusToDovraStatuses = (status) => {
+  if (!status) return null;
+
+  switch (status) {
+    case "upcoming":
+      return ["pending", "contacted"];
+    case "completed":
+      return ["closed"];
+    default:
+      return [status];
+  }
+};
+
+const mapRequestedStatusToBuyCarStatuses = (status) => {
+  if (!status) return null;
+
+  switch (status) {
+    case "upcoming":
+      return ["pending"];
+    case "completed":
+      return ["approved"];
+    case "cancelled":
+      return ["rejected"];
+    default:
+      return [status];
+  }
+};
+
+const normalizeHistoryStatus = (bookingType, rawStatus) => {
+  const normalizedStatus = normalizeStatusFilter(rawStatus);
+
+  if (!normalizedStatus) {
+    return "pending";
+  }
+
+  if (bookingType === "carWash") {
+    if (["pending", "confirmed"].includes(normalizedStatus)) {
+      return "upcoming";
+    }
+    return normalizedStatus;
+  }
+
+  if (bookingType === "dovra") {
+    if (["pending", "contacted"].includes(normalizedStatus)) {
+      return "pending";
+    }
+    if (normalizedStatus === "closed") {
+      return "completed";
+    }
+    return normalizedStatus;
+  }
+
+  if (bookingType === "buyACar") {
+    if (normalizedStatus === "approved") {
+      return "completed";
+    }
+    if (normalizedStatus === "rejected") {
+      return "cancelled";
+    }
+    return normalizedStatus;
+  }
+
+  return normalizedStatus;
+};
 
 const mapRentBookingHistory = (booking) => {
   const image = booking.carId?.thumbnail || booking.carId?.images?.[0]?.url || null;
@@ -96,7 +199,8 @@ const mapRentBookingHistory = (booking) => {
     amount: formatCurrencyAmount(booking.totalRent, currency),
     pickupDate: booking.pickupDate,
     returnDate: booking.returnDate,
-    status: booking.status,
+    status: normalizeHistoryStatus("rent", booking.status),
+    rawStatus: booking.status,
     createdAt: booking.createdAt,
   };
 };
@@ -122,12 +226,74 @@ const mapCarWashBookingHistory = (booking) => {
     amount: formatCurrencyAmount(booking.totalEstimate, booking.currency || "SEK"),
     pickupDate: booking.bookingDate,
     returnDate: null,
-    status: booking.status,
+    status: normalizeHistoryStatus("carWash", booking.status),
+    rawStatus: booking.status,
     createdAt: booking.createdAt,
   };
 };
 
-export const getUserBookingHistory = async (userId, options = {}) => {
+const mapDovraBookingHistory = (inquiry) => {
+  const dovraTitle = Array.isArray(inquiry.interestedIn)
+    ? inquiry.interestedIn.join(", ")
+    : inquiry.interestedIn || "Dovra Inquiry";
+
+  return {
+    id: inquiry._id,
+    bookingType: "dovra",
+    reference: buildReference("DV", inquiry._id),
+    carInfo: {
+      title: dovraTitle,
+      image: inquiry.carImage || null,
+      hasImage: Boolean(inquiry.carImage),
+      fallbackLabel: "Dovra",
+    },
+    personalInfo: {
+      name: `${inquiry.firstName} ${inquiry.lastName}`.trim(),
+      phone: inquiry.phoneNumber || null,
+      email: inquiry.email || null,
+    },
+    amount: formatCurrencyAmount(null),
+    pickupDate: null,
+    returnDate: null,
+    status: normalizeHistoryStatus("dovra", inquiry.status || "pending"),
+    rawStatus: inquiry.status || "pending",
+    createdAt: inquiry.createdAt,
+  };
+};
+
+const mapBuyACarBookingHistory = (inquiry) => {
+  const amount = inquiry.strategy?.totalEstimate || inquiry.lease?.totalEstimate || null;
+  const buyCarTitle =
+    inquiry.carData?.title ||
+    `${inquiry.carData?.make || ""} ${inquiry.carData?.model || ""}`.trim() ||
+    inquiry.carData?.name ||
+    "Buy a Car";
+
+  return {
+    id: inquiry._id,
+    bookingType: "buyACar",
+    reference: buildReference("BC", inquiry._id),
+    carInfo: {
+      title: buyCarTitle,
+      image: inquiry.carData?.thumbnail || inquiry.carData?.images?.[0]?.url || null,
+      hasImage: Boolean(inquiry.carData?.thumbnail || inquiry.carData?.images?.[0]?.url),
+      fallbackLabel: "Buy a Car",
+    },
+    personalInfo: {
+      name: inquiry.name || "Unknown",
+      phone: inquiry.phoneNumber || null,
+      email: null,
+    },
+    amount: formatCurrencyAmount(amount),
+    pickupDate: null,
+    returnDate: null,
+    status: normalizeHistoryStatus("buyACar", inquiry.status || "pending"),
+    rawStatus: inquiry.status || "pending",
+    createdAt: inquiry.createdAt,
+  };
+};
+
+export const getUserBookingHistory = async (userId, userEmail, options = {}) => {
   const {
     bookingType = "all",
     status = null,
@@ -137,19 +303,83 @@ export const getUserBookingHistory = async (userId, options = {}) => {
 
   const normalizedPage = normalizePagination(page, 1);
   const normalizedLimit = normalizePagination(limit, 10);
+  const normalizedStatus = normalizeStatusFilter(status);
 
-  const rentFilter = { userId };
-  const carWashFilter = { userId };
+  const userChats = await Chat.find({ "user.id": userId })
+    .select("inquiryType inquiryId")
+    .lean();
 
-  if (status) {
-    rentFilter.status = status;
-    carWashFilter.status = status;
+  const inquiryIdsByType = userChats.reduce(
+    (accumulator, chat) => {
+      if (!accumulator[chat.inquiryType]) {
+        accumulator[chat.inquiryType] = [];
+      }
+
+      accumulator[chat.inquiryType].push(chat.inquiryId);
+      return accumulator;
+    },
+    {
+      rentACarInquiry: [],
+      carWash: [],
+      dovra: [],
+      buyACar: [],
+    },
+  );
+
+  const rentFilter = {
+    $or: [
+      { userId },
+      { _id: { $in: inquiryIdsByType.rentACarInquiry } },
+    ],
+  };
+  const carWashFilter = {
+    $or: [
+      { userId },
+      ...(userEmail ? [{ email: userEmail }] : []),
+      { _id: { $in: inquiryIdsByType.carWash } },
+    ],
+  };
+  const dovraFilter = {
+    $or: [
+      { userId },
+      ...(userEmail ? [{ email: userEmail }] : []),
+      { _id: { $in: inquiryIdsByType.dovra } },
+    ],
+  };
+  const buyACarFilter = {
+    $or: [
+      { userId },
+      { _id: { $in: inquiryIdsByType.buyACar } },
+    ],
+  };
+
+  const rentStatuses = mapRequestedStatusToRentStatuses(normalizedStatus);
+  const carWashStatuses = mapRequestedStatusToCarWashStatuses(normalizedStatus);
+  const dovraStatuses = mapRequestedStatusToDovraStatuses(normalizedStatus);
+  const buyCarStatuses = mapRequestedStatusToBuyCarStatuses(normalizedStatus);
+
+  if (rentStatuses) {
+    rentFilter.status = { $in: rentStatuses };
+  }
+
+  if (carWashStatuses) {
+    carWashFilter.status = { $in: carWashStatuses };
+  }
+
+  if (dovraStatuses) {
+    dovraFilter.status = { $in: dovraStatuses };
+  }
+
+  if (buyCarStatuses) {
+    buyACarFilter.status = { $in: buyCarStatuses };
   }
 
   const shouldFetchRent = bookingType === "all" || bookingType === "rent";
   const shouldFetchCarWash = bookingType === "all" || bookingType === "carWash";
+  const shouldFetchDovra = bookingType === "all" || bookingType === "dovra";
+  const shouldFetchBuyACar = bookingType === "all" || bookingType === "buyACar";
 
-  const [rentBookings, carWashBookings, rentTotal, carWashTotal] = await Promise.all([
+  const [rentBookings, carWashBookings, dovraInquiries, buyACarInquiries, rentTotal, carWashTotal, dovraTotal, buyACarTotal] = await Promise.all([
     shouldFetchRent
       ? RentACarBooking.find(rentFilter)
           .populate("carId", "title make model thumbnail images pricing")
@@ -157,15 +387,27 @@ export const getUserBookingHistory = async (userId, options = {}) => {
           .lean()
       : Promise.resolve([]),
     shouldFetchCarWash
-      ? CarWashBooking.find(carWashFilter).lean()
+      ? CarWashBooking.find(carWashFilter)
+          .populate("userId", "name email")
+          .lean()
       : Promise.resolve([]),
-    RentACarBooking.countDocuments({ userId }),
-    CarWashBooking.countDocuments({ userId }),
+    shouldFetchDovra
+      ? DovraInquiry.find(dovraFilter).lean()
+      : Promise.resolve([]),
+    shouldFetchBuyACar
+      ? BuyACar.find(buyACarFilter).lean()
+      : Promise.resolve([]),
+    RentACarBooking.countDocuments(rentFilter),
+    CarWashBooking.countDocuments(carWashFilter),
+    DovraInquiry.countDocuments(dovraFilter),
+    BuyACar.countDocuments(buyACarFilter),
   ]);
 
   const combinedHistory = [
     ...rentBookings.map(mapRentBookingHistory),
     ...carWashBookings.map(mapCarWashBookingHistory),
+    ...dovraInquiries.map(mapDovraBookingHistory),
+    ...buyACarInquiries.map(mapBuyACarBookingHistory),
   ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const total = combinedHistory.length;
@@ -182,9 +424,11 @@ export const getUserBookingHistory = async (userId, options = {}) => {
       limit: normalizedLimit,
     },
     summary: {
-      allBookings: rentTotal + carWashTotal,
+      allBookings: rentTotal + carWashTotal + dovraTotal + buyACarTotal,
       rentBookings: rentTotal,
       carWashBookings: carWashTotal,
+      dovraInquiries: dovraTotal,
+      buyACarInquiries: buyACarTotal,
     },
   };
 };
