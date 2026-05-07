@@ -89,7 +89,6 @@ export const clearHistoryController = async (req, res) => {
 export const deleteQueryRecordController = async (req, res) => {
   try {
     const { queryId } = req.params;
-
     const result = await queryHistoryService.deleteQueryRecord(queryId);
     return handleServiceResult(res, result);
   } catch (err) {
