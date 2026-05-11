@@ -4,7 +4,7 @@ const serviceSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: true,              
       trim: true,
     },
 
@@ -36,6 +36,7 @@ const serviceSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    
   },
   {
     _id: true,
@@ -46,11 +47,29 @@ const serviceCategorySchema = new mongoose.Schema(
   {
     categoryName: {
       type: String,
-      required: true,
       trim: true,
     },
 
     services: [serviceSchema],
+    extraServices: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        price: {
+          type: Number,
+          required: true,
+        },
+
+        isActive: {
+          type: Boolean,
+          default: true,
+        },
+      },
+    ],
 
     order: {
       type: Number,
