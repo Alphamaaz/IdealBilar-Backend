@@ -126,3 +126,10 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# IDE Config Files
+.idea/
+.vscode/
+
+./idealbilar website
+./idealbilar website/Idealbilar-dashboard

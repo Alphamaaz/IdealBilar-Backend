@@ -55,5 +55,20 @@ const rentACarBookingSchema = new mongoose.Schema(
   },
 );
 
+// Static method to find booked dates for a car in a given month
+rentACarBookingSchema.statics.findBookedDates = function(carId, monthStart, monthEnd, statusFilter = []) {
+  const query = {
+    carId,
+    pickupDate: { $lt: monthEnd },
+    returnDate: { $gt: monthStart }
+  };
+
+  if (statusFilter && statusFilter.length > 0) {
+    query.status = { $in: statusFilter };
+  }
+
+  return this.find(query);
+};
+
 //export
 export default mongoose.model("RentACarBooking", rentACarBookingSchema);
