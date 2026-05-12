@@ -7,6 +7,7 @@ import { rentACarFetchingDataForAdminDashboardController } from "../controllers/
 import { rentACarDeleteDataController } from "../controllers/rentACarDeleteDataInquiry.controller.js";
 import { rentACarEditeController } from "../controllers/rentACarEditeInquery.controller.js";
 import { filterCarRentalsController } from "../controllers/carRentalFilter.controller.js";
+import { getBookedDates, checkAvailability } from "../controllers/availability.controller.js";
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
@@ -59,6 +60,10 @@ rentACarRouter.put(
   middlewareForVerifyJwtToken,
   rentACarEditeController,
 );
+
+// Availability endpoints
+rentACarRouter.get('/availability/:carId', getBookedDates);
+rentACarRouter.post('/check-availability', checkAvailability);
 
 //export
 export default rentACarRouter;

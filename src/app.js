@@ -21,6 +21,8 @@ import { dashboardRouter } from "./modules/dashboard/index.js";
 import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
 import { queryHistoryRouter } from "./modules/queryHistory/index.js";
 
+import { carwashServicesRouter } from "./modules/carwashServices/index.js";
+
 //Profile module import
 import { ProfileHandle } from './modules/profile/index.js';
 
@@ -29,7 +31,9 @@ const allowedOrigins = new Set([
   "http://localhost:5174",
   "http://localhost:3001",
   "http://localhost:3000",
-  "http://31.97.77.215" // Added based on user screenshot
+  "http://31.97.77.215",
+  "https://ideal-bilar-site.vercel.app",
+  "https://idealbilar-dashboard.vercel.app"
 ]);
 
 if (process.env.ALLOWED_ORIGINS) {
@@ -86,7 +90,8 @@ app.use('/api/v1', userRouter)
 app.use('/api/v1', buyACarhandler);
 app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
-app.use('/api/v1', workshopServicesRouter);
+app.use('/api/v1/carwash-services', carwashServicesRouter);
+app.use('/api/v1/workshop-services', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
 app.use('/api/v1', saleACarRouter);
 app.use('/api/v1', dashboardRouter);

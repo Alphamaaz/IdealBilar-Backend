@@ -26,7 +26,7 @@ const normalizeDate = (dateInput) => {
 
   return {
     normalized: `${year}-${paddedMonth}-${paddedDay}`,
-    date: new Date(Date.UTC(year, month - 1, day + 1)),
+    date: new Date(Date.UTC(year, month - 1, day)),
   };
 };
 

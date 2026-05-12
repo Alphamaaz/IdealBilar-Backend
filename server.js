@@ -15,8 +15,19 @@ const server = http.createServer(app);
 //Attach socket.io to the same server 
 const io = new Server(server, {
   cors: {
-    origin: config.socketIOCorsOrigin,
-    method: ['GET','POST'],
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      if (config.socketIOCorsOrigin.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      return callback(new Error(`Socket.IO CORS rejected: ${origin}`));
+    },
+    methods: ['GET','POST'],
+    credentials: true
   }
 })
 

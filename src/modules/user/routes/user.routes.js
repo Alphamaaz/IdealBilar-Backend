@@ -8,6 +8,7 @@ import {
   forgotPasswordVerifyOTPController as forgotPasswordVerifyOTPHandler,
   userResetPasswordController as userResetPasswordHandler,
   myProfileController as myProfileHandler,
+  googleLoginController as googleLoginHandler,
 } from "../controllers/user.controller.js";
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 
@@ -18,6 +19,9 @@ Router.post("/user-signup", userRegisterHandler);
 
 // user sign in endpoint
 Router.post("/user-signin", userLoginHandler);
+
+// google login endpoint
+Router.post("/google-login", googleLoginHandler);
 
 // my profile endpoint
 Router.get("/my-profile", middlewareForVerifyJwtToken, myProfileHandler);

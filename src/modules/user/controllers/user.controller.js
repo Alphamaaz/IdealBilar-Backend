@@ -44,6 +44,25 @@ const userLoginController = async (req, res) => {
   }
 };
 
+
+// google login controller
+const googleLoginController = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const result = await userService.googleLogin(token);
+
+    return handleServiceResult(res, result);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+//
+
 const myProfileController = async (req, res) => {
   try {
     const result = await userService.myProfile(req.userId);
@@ -126,5 +145,6 @@ export {
   forgotPasswordVerifyOTPController,
   userResetPasswordController,
   myProfileController,
+  googleLoginController,
 };
 

@@ -1,5 +1,5 @@
 //External modules
-
+import admin from "../../../shared/config/firebase.js";
 //Internal modules
 import {
   userRegisterationValidation,
@@ -277,6 +277,61 @@ const userLogin = async (userData) => {
     };
   }
 };
+//  login or create with google service
+const googleLogin = async (token) => {
+  try {
+    if (!token) {
+      return {
+        success: false,
+        status: 400,
+        message: "Firebase token required",
+      };
+    }
+
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
+    const { uid, email, name } = decodedToken;
+
+    if (!email) {
+      return {
+        success: false,
+        status: 400,
+        message: "Google account email not found",
+      };
+    }
+
+    let user = await getUserByEmail(email);
+
+    // Create user if not exists
+    if (!user) {
+      user = await createUser({
+        name: name || "Google User",
+        email,
+        password: null,
+        provider: "google",
+        firebaseUID: uid,
+        isVerified: true,
+      });
+    }
+
+    // Issue your JWT
+    const appToken = issueToken(user._id);
+
+    return {
+      success: true,
+      status: 200,
+      message: "Google login successful",
+      data: sanitizeUser(user),
+      token: appToken,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      status: 401,
+      message: "Invalid Firebase token",
+    };
+  }
+};
 
 const myProfile = async (userId) => {
   try {
@@ -490,6 +545,7 @@ export {
   resendEmailVerificationOTP,
   verifyEmailOTP,
   userLogin,
+  googleLogin,
   sendForgotPasswordOTP,
   verifyForgotPasswordOTP,
   getUserById,
