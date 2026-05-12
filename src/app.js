@@ -20,7 +20,7 @@ import { saleACarRouter } from "./modules/saleACar/index.js";
 import { dashboardRouter } from "./modules/dashboard/index.js";
 import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
 import { queryHistoryRouter } from "./modules/queryHistory/index.js";
-
+import { showroomLocationRouter } from "./modules/showroomLocations/index.js";
 import { carwashServicesRouter } from "./modules/carwashServices/index.js";
 import { testimonialHandler } from './modules/clientTestimonials/index.js'
 
@@ -97,6 +97,7 @@ app.use('/api/v1', notificationRouter);
 app.use('/api/v1', saleACarRouter);
 app.use('/api/v1', dashboardRouter);
 app.use('/api/v1', queryHistoryRouter);
+app.use('/api/v1', showroomLocationRouter);
 
 // Chat endpoints
 app.use('/api/v1', chatRouterHandler);
