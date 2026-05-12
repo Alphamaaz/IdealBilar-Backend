@@ -17,6 +17,16 @@ const createUser = async (userData) => {
   }
 };
 
+// creat google user
+const createGoogleUser = async (userData) => {
+  try {
+    const user = await User.create(userData);
+    return user;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 // Get user by email
 const getUserByEmail = async (email, includePassword = false) => {
   try {
@@ -120,6 +130,7 @@ const userResetPassword = async (userId, newPassword) => {
 
 export {
   createUser,
+  createGoogleUser,
   getUserByEmail,
   getUserById,
   saveUserOTP,

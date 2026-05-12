@@ -43,14 +43,51 @@ const serviceSchema = new mongoose.Schema(
   },
 );
 
-const serviceCategorySchema = new mongoose.Schema(
+const vehicleSchema = new mongoose.Schema(
   {
-    categoryName: {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
       type: String,
       trim: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    _id: true,
+  },
+);
 
+
+const categorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      trim: true,
+    },
+    
     services: [serviceSchema],
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const serviceCategorySchema = new mongoose.Schema(
+  {
+    
+    category: categorySchema,
+    vehicleType: [vehicleSchema], 
     extraServices: [
       {
         name: {

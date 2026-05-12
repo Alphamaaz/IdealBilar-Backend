@@ -90,8 +90,8 @@ app.use('/api/v1', userRouter)
 app.use('/api/v1', buyACarhandler);
 app.use('/api/v1', dovraInquiryRouter);
 app.use('/api/v1', carWashRouter);
-app.use('/api/v1', carwashServicesRouter);
-app.use('/api/v1', workshopServicesRouter);
+app.use('/api/v1/carwash-services', carwashServicesRouter);
+app.use('/api/v1/workshop-services', workshopServicesRouter);
 app.use('/api/v1', notificationRouter);
 app.use('/api/v1', saleACarRouter);
 app.use('/api/v1', dashboardRouter);

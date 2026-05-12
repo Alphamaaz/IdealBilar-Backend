@@ -9,6 +9,7 @@ import connectDB from "./src/database/db.js";
 import { socketHandler } from './src/modules/chats/sockets/chat.socket.js';
 import { config } from "./src/shared/config/config.js";
 
+
 //Create server explicitly
 const server = http.createServer(app);
 
@@ -39,3 +40,5 @@ server.listen(3000, () => {
 });
 
 connectDB();
+
+
