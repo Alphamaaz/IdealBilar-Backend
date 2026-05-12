@@ -120,7 +120,6 @@ const userRegister = async (userData) => {
   }
 };
 
-
 const resendEmailVerificationOTP = async (emailData) => {
   try {
     const { success, error } = emailValidation(emailData);
