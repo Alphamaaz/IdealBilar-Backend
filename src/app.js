@@ -22,6 +22,7 @@ import { chatRouterHandler } from "./modules/chats/routes/chat.route.js";
 import { queryHistoryRouter } from "./modules/queryHistory/index.js";
 import { showroomLocationRouter } from "./modules/showroomLocations/index.js";
 import { carwashServicesRouter } from "./modules/carwashServices/index.js";
+import { testimonialHandler } from './modules/clientTestimonials/index.js'
 
 //Profile module import
 import { ProfileHandle } from './modules/profile/index.js';
@@ -73,7 +74,7 @@ app.use("/api/v1/uploads", express.static(path.resolve("public", "uploads")));
 app.use('/api', userRouter);
 
 // Client testimonial endpoints/URL's
-// app.use('/api', clientTestimonialRoutes);
+app.use('/api/v1', testimonialHandler);
 
 //Rent a car endpoints/URL's
 app.use('/api/v1', rentACarRouter);
