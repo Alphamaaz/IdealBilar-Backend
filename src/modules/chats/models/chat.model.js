@@ -57,7 +57,7 @@ const chatSchema = new mongoose.Schema({
   _id: { type: String, required: true },
   inquiryType: {
     type: String,
-    enum: ['dovra', 'buyACar', 'carWash', 'rentACarInquiry'],
+    enum: ['dovra', 'buyACar', 'carWash', 'rentACarInquiry', 'general'],
     required: true
   },
   inquiryId: { type: String, required: true },

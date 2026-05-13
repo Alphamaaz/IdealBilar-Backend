@@ -4,10 +4,10 @@ import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.mi
 
 const router = Router();
 
-router.post("/workshop-services", middlewareForVerifyJwtToken, createWorkshopController);
-router.get("/workshop-services", getAllWorkshopServicesController);
-router.get("/workshop-services/:id", getSingleWorkshopServiceController);
-router.put("/workshop-services/:id", updateWorkshopServiceController);
-router.delete("/workshop-services/:id", deleteWorkshopServiceController);
+router.post("/", middlewareForVerifyJwtToken, createWorkshopController);
+router.get("/", getAllWorkshopServicesController);
+router.get("/:id", getSingleWorkshopServiceController);
+router.put("/:id", updateWorkshopServiceController);
+router.delete("/:id", deleteWorkshopServiceController);
 
 export default router;

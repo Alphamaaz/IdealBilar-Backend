@@ -78,6 +78,13 @@ const formatInquiryDetails = (inquiryType, inquiry) => {
         status: inquiry.status,
       };
 
+    case 'general':
+      return {
+        id: inquiry._id,
+        type: 'General',
+        title: inquiry.title || 'General Support',
+      };
+
     default:
       return null;
   }

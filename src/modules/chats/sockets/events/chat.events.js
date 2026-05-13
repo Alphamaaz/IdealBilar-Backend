@@ -7,6 +7,7 @@ import { notificationServices } from "../../../notification/services/notificatio
 import User from "../../../user/models/user.model.js";
 
 const inquiryTypeToNotificationType = {
+  general: 'General',
   dovra: 'Dovra',
   buyACar: 'Buy Car',
   carWash: 'Car Wash',

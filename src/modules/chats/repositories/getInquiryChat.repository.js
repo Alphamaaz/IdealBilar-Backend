@@ -23,6 +23,12 @@ const fetchInquiry = async (inquiryType, inquiryId) => {
       return CarWashBooking.findById(inquiryId)
         .select('vehicleType carBrandAndModel selectedServices bookingDate bookingTime estimatedDurationHours totalEstimate currency status')
         .lean();
+    case 'general':
+      return {
+        _id: inquiryId,
+        type: 'General',
+        title: 'General Support',
+      };
     default:
       return null;
   }

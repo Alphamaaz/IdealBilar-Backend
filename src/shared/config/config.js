@@ -9,13 +9,23 @@ const defaultCorsOrigins = [
   "https://idealbilar-dashboard.vercel.app"
 ];
 
-const socketCorsOrigins = process.env.SOCKET_IO_CORS_ORIGIN 
-  ? process.env.SOCKET_IO_CORS_ORIGIN.split(',').map(origin => origin.trim())
-  : defaultCorsOrigins;
+const parseOrigins = (value) =>
+  value
+    ? value
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+    : [];
+
+const socketCorsOrigins = [
+  ...defaultCorsOrigins,
+  ...parseOrigins(process.env.ALLOWED_ORIGINS),
+  ...parseOrigins(process.env.SOCKET_IO_CORS_ORIGIN),
+];
 
 export const config = {
   // Socket.io CORS origins - array of allowed origins
-  socketIOCorsOrigin: socketCorsOrigins,
+  socketIOCorsOrigin: [...new Set(socketCorsOrigins)],
   
   // Server port
   serverPort: process.env.PORT || 3000,
