@@ -23,6 +23,7 @@ import { queryHistoryRouter } from "./modules/queryHistory/index.js";
 import { showroomLocationRouter } from "./modules/showroomLocations/index.js";
 import { carwashServicesRouter } from "./modules/carwashServices/index.js";
 import { testimonialHandler } from './modules/clientTestimonials/index.js'
+import { conciergeFaqRouter } from './modules/conciergeFaq/index.js';
 
 //Profile module import
 import { ProfileHandle } from './modules/profile/index.js';
@@ -98,6 +99,7 @@ app.use('/api/v1', saleACarRouter);
 app.use('/api/v1', dashboardRouter);
 app.use('/api/v1', queryHistoryRouter);
 app.use('/api/v1', showroomLocationRouter);
+app.use('/api/v1', conciergeFaqRouter);
 
 // Chat endpoints
 app.use('/api/v1', chatRouterHandler);
