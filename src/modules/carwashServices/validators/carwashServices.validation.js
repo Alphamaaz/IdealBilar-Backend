@@ -32,13 +32,13 @@ const serviceValidationSchema = z.object({
     .optional(),
 
   price: z
-    .number({
+    .coerce.number({
       invalid_type_error: "Price must be a number",
     })
     .positive("Price must be positive"),
 
   duration: z
-    .number({
+    .coerce.number({
       invalid_type_error: "Duration must be a number",
     })
     .int("Duration must be an integer")
@@ -50,7 +50,7 @@ const serviceValidationSchema = z.object({
 
   isPopular: z.boolean().optional().default(false),
 
-  image: z.string().url("Image must be a valid URL").optional(),
+  image: z.string().trim().optional(),
 });
 
 // Category Validation
@@ -64,7 +64,8 @@ const categoryValidationSchema = z.object({
 
   services: z
     .array(serviceValidationSchema)
-    .min(1, "At least one service is required"),
+    .optional()
+    .default([]),
 
   isActive: z.boolean().optional().default(true),
 });
@@ -78,7 +79,7 @@ const extraServiceValidationSchema = z.object({
     .max(100, "Extra service name must not exceed 100 characters"),
 
   price: z
-    .number({
+    .coerce.number({
       invalid_type_error: "Price must be a number",
     })
     .positive("Price must be positive"),
@@ -88,21 +89,44 @@ const extraServiceValidationSchema = z.object({
 
 // Main Validation Schema
 const serviceCategoryValidationSchema = z.object({
-  category: categoryValidationSchema,
+  category: categoryValidationSchema.optional(),
 
   vehicleType: z
     .array(vehicleSchemaValidation)
-    .min(1, "At least one vehicle type is required"),
+    .optional()
+    .default([]),
 
   extraServices: z.array(extraServiceValidationSchema).optional().default([]),
 
   order: z
-    .number({
+    .coerce.number({
       invalid_type_error: "Order must be a number",
     })
     .int("Order must be an integer")
     .optional()
     .default(0),
+
+  isActive: z.boolean().optional().default(true),
+}).superRefine((data, ctx) => {
+  const hasCategory = Boolean(data.category?.name || data.category?.services?.length);
+  const hasVehicleType = Array.isArray(data.vehicleType) && data.vehicleType.length > 0;
+  const hasExtraServices = Array.isArray(data.extraServices) && data.extraServices.length > 0;
+
+  if (!hasCategory && !hasVehicleType && !hasExtraServices) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["category"],
+      message: "Provide at least one category, vehicle type, or extra service",
+    });
+  }
+
+  if (data.category && (!data.category.services || data.category.services.length === 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["category", "services"],
+      message: "At least one service is required",
+    });
+  }
 });
 
 // Main Validator

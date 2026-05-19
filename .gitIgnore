@@ -131,7 +131,7 @@ Thumbs.db
 .idea/
 .vscode/
 
-./idealbilar website
-./idealbilar website/Idealbilar-dashboard
+/idealbilar website/
+/idealbilar website/**
 firebase-adminsdk.json
 .json
