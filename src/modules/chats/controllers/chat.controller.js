@@ -4,6 +4,7 @@ import { markMessagesReadService } from '../services/markMessagesRead.service.js
 import { getTotalUnreadCountService } from '../services/getTotalUnreadCount.service.js';
 import { debugUnreadCountService } from '../services/debugUnreadCount.service.js';
 import { debugChatMessagesService } from '../services/debugChatMessages.service.js';
+import { getOrCreateGeneralChatService } from '../services/getOrCreateGeneralChat.service.js';
 import Chat from '../models/chat.model.js';
 
 // GET /api/v1/chat/inquiry/:inquiryId
@@ -26,6 +27,19 @@ const getInquiryChatController = async (req, res) => {
     return res.status(200).json({ success: true, data: result });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GET /api/v1/chat/general
+const getOrCreateGeneralChatController = async (req, res) => {
+  try {
+    const result = await getOrCreateGeneralChatService(req.userId);
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res
+      .status(error.statusCode || 500)
+      .json({ success: false, message: error.message });
   }
 };
 
@@ -177,4 +191,4 @@ const debugChatMessagesController = async (req, res) => {
   }
 };
 
-export { getInquiryChatController, getAdminChatsController, getUserChatsController, markChatAsReadController, getTotalUnreadCountController, debugUnreadCountController, debugChatMessagesController };
+export { getInquiryChatController, getOrCreateGeneralChatController, getAdminChatsController, getUserChatsController, markChatAsReadController, getTotalUnreadCountController, debugUnreadCountController, debugChatMessagesController };

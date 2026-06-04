@@ -28,7 +28,8 @@ export const createCarWashServiceController = async (req, res) => {
   } catch (error) {
     // Zod validation error handling
     if (error.name === "ZodError") {
-      const errorMessages = error.errors.map(err => ({
+      const issues = error.issues || error.errors || [];
+      const errorMessages = issues.map(err => ({
         field: err.path.join("."),
         message: err.message
       }));
@@ -159,7 +160,7 @@ export const getAvailableVehicleTypesController = async (req, res) => {
 export const updateCarWashServiceController = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const updateData = validateCarWashServiceSchema(req.body);
 
     const result = await updateCarWashServiceService(id, updateData);
     return res.status(200).json({
@@ -168,6 +169,20 @@ export const updateCarWashServiceController = async (req, res) => {
       data: result.data,
     });
   } catch (error) {
+    if (error.name === "ZodError") {
+      const issues = error.issues || error.errors || [];
+      const errorMessages = issues.map(err => ({
+        field: err.path.join("."),
+        message: err.message
+      }));
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: errorMessages,
+      });
+    }
+
     if (error.message === "Service category not found") {
       return res.status(404).json({
         success: false,

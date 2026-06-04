@@ -23,7 +23,7 @@ const notificationSchema = new mongoose.Schema(
       type: String,
     },
     referenceId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
     },
     recipientId: {
       type: String,

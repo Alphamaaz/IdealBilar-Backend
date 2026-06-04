@@ -2,13 +2,15 @@ import { Notification } from "../models/notification.model.js";
 
 const notificationServices = async (validatedData) => {
     try {
-        const { type, message, model, name, referenceId } = validatedData;
+        const { type, message, model, name, referenceId, recipientId, recipientType } = validatedData;
         const notification = await Notification.create({
             type,
             message,
             model,
             name,
             referenceId,
+            recipientId,
+            recipientType,
         });
         return notification;
     } catch (error) {

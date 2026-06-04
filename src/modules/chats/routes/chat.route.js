@@ -3,6 +3,7 @@ import { middlewareForVerifyJwtToken } from '../../../shared/middlewares/auth.mi
 import { adminOnlyMiddleware } from '../../../shared/middlewares/adminOnlyAuth.moddleware.js';
 import {
   getInquiryChatController,
+  getOrCreateGeneralChatController,
   getAdminChatsController,
   getUserChatsController,
   markChatAsReadController,
@@ -12,6 +13,9 @@ import {
 } from '../controllers/chat.controller.js';
 
 const chatRouter = express.Router();
+
+// User: get or create direct general support chat with admin
+chatRouter.get('/chat/general', middlewareForVerifyJwtToken, getOrCreateGeneralChatController);
 
 // Fetch chat + message history for a specific inquiry (user sees own, admin sees all)
 chatRouter.get('/chat/inquiry/:inquiryId', middlewareForVerifyJwtToken, getInquiryChatController);
