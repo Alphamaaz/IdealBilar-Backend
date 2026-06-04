@@ -1,4 +1,7 @@
+//External modules
 import express from "express";
+
+//Internal modules
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 import {

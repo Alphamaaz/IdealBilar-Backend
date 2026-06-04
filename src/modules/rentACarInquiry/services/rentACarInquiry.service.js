@@ -1,5 +1,5 @@
 // Internal modules
-
+import { sendAdminInquiryEmail } from "../../../shared/utils/sendEmailNotificationToAdminOnInquiry.js";
 import RentalCar from "../../rentalCar/model/rentalCar.model.js";
 import {
   findOverlappingRentACarBooking,
@@ -9,12 +9,9 @@ import {
 const formatDate = (date) => new Date(date).toISOString().split("T")[0];
 
 const rentACarService = async (rentACarData) => {
-  console.log("Check the rentACarID ", rentACarData);
   
     try{
-      const rentalCar = await RentalCar.findById(rentACarData.carId);
-      console.log("Check the rental car ", rentalCar);
-      
+      const rentalCar = await RentalCar.findById(rentACarData.carId);    
 
       if (!rentalCar) {
         return {
@@ -47,6 +44,15 @@ const rentACarService = async (rentACarData) => {
       }
 
       const result = await saveRentACarData(rentACarData);
+      console.log("Check the result in the rent a car service ", result);
+      const dataForEmailNotification = {
+        name: result?.userId?.name,
+        email: result?.userId?.email,
+        message: "New Inquiry from the rent a car!",
+        Inquiry: "Rent a Car"
+      }
+      //send admin notification email
+      await sendAdminInquiryEmail(dataForEmailNotification);
       return {
         success: true,
         status: 201,

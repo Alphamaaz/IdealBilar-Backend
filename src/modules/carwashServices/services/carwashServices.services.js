@@ -116,7 +116,7 @@ export const updateCarWashServiceService = async (id, updateData) => {
   const updatedService = await ServiceCategory.findByIdAndUpdate(
     id,
     updateData,
-    { new: true, runValidators: true }
+    { returnDocument: "after"}
   );
 
   if (!updatedService) {

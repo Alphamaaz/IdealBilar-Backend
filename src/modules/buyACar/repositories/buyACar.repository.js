@@ -5,6 +5,7 @@ import { createChatForInquiryRepository } from "../../chats/repositories/createC
 const buyACarRepository = async (buyACarData) => {
     try {
         const result = await BuyACar.create(buyACarData);
+        await result.populate('userId', 'name email');
         await notificationServices({
             name: buyACarData.name,
             type: "Buy Car",

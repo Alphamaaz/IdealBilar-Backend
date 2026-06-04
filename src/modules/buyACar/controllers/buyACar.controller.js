@@ -9,7 +9,6 @@ import settingResponse from "../../../shared/utils/settingResponse.js";
 import { buyACarService } from "../services/buyACar.service.js";
 const buyACarController = async (req, res) => {
   try {
-    console.log("User id come from middleware ", req.userId);
     const buyACarData = {
       ...req.body,
       userId: req.userId,

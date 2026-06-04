@@ -3,10 +3,10 @@ import { rentACarService } from "../services/rentACarInquiry.service.js";
 import { rentACarDataValidationFunction } from "../validations/rentACarInquiry.validation.js";
 import { normalizeDate } from "../../../shared/utils/normalizeToDateOnlyUTC.js";
 
-const rentACarController = async (req, res) => {
-  console.log("We are in the rent a car controller ", req.body);
-  
+const rentACarController = async (req, res) => {  
   try {
+    console.log("Check the rent a car controller ", req.body);
+    
     if (!req.file) {
       return res.status(400).json({
         success: false,

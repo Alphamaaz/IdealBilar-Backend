@@ -3,6 +3,7 @@
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
 import { contactusValidation } from "../validations/contactus.validations.js";
 import { contactusDataStoringFunction } from "../repositories/contactus.repository.js";
+import { sendAdminInquiryEmail } from "../../../shared/utils/sendEmailNotificationToAdminOnInquiry.js";
 
 // contact us service
 const contactusService = async (contactUsData) => {
@@ -15,6 +16,15 @@ const contactusService = async (contactUsData) => {
         }
         
         const result = await contactusDataStoringFunction(data);
+
+        const dataForEmailNotification = {
+            name: result?.firstName + " " + result.lastName,
+            email: result.email,
+            message: result.message,
+            Inquiry: "Contact Us"
+        }
+        await sendAdminInquiryEmail(dataForEmailNotification);
+        
         return result;
         
     }catch(err){

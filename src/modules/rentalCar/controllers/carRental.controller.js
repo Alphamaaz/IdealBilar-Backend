@@ -3,6 +3,8 @@ import { deleteCarRentalService, getAllCarRentalsService, getCarRentalByIdServic
 
 const createCarRentalController = async (req, res) => {
   try {
+    console.log("Check the create car rental controller ", req.body);
+    
     const result = await registerCarRentalService(req.body, req.files);
     res.status(result.status).json(result);
   } catch (error) {

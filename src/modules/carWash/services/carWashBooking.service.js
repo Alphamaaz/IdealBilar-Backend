@@ -1,3 +1,4 @@
+import { sendAdminInquiryEmail } from "../../../shared/utils/sendEmailNotificationToAdminOnInquiry.js";
 import {
   createCarWashBookingRepository,
   deleteCarWashBookingRepository,
@@ -7,11 +8,12 @@ import {
 } from "../repositories/carWashBooking.repository.js";
 
 const createCarWashBookingService = async (bookingData, userId) => {
+  
   const existingSlot = await findBookedCarWashSlotRepository({
     bookingDate: bookingData.bookingDate,
     bookingTime: bookingData.bookingTime,
   });
-
+  
   if (existingSlot) {
     return {
       success: false,
@@ -19,8 +21,19 @@ const createCarWashBookingService = async (bookingData, userId) => {
       message: `The ${bookingData.bookingTime} slot on ${bookingData.bookingDate.toISOString().split("T")[0]} is already booked. Please select another time.`,
     };
   }
-
+  
   const result = await createCarWashBookingRepository(bookingData, userId);
+  
+  console.log("We are in the car wash booking service ", result);
+  //Set proper data for the send admin notification email
+  const dataForEmailNotification = {
+    name: result?.userId?.name,
+    email: result?.userId?.email,
+    message: "New Car Wash Booking inquiry",
+    Inquiry: "Car Wash Booking"
+  }
+
+  await sendAdminInquiryEmail(dataForEmailNotification);
 
   return {
     success: true,

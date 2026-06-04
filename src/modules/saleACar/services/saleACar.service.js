@@ -1,3 +1,4 @@
+import { sendAdminInquiryEmail } from "../../../shared/utils/sendEmailNotificationToAdminOnInquiry.js";
 import {
   createSaleACarRepository,
   deleteSaleACarInquiryRepository,
@@ -6,6 +7,15 @@ import {
 
 const createSaleACarService = async (saleACarData) => {
   const result = await createSaleACarRepository(saleACarData);
+  const dataForEmailNotification = {
+    name: saleACarData?.ownerInformation?.fullName,
+    email: saleACarData?.ownerInformation?.email,
+    message: "New Sale a car Inquirey",
+    Inquiry: "Sale a car"
+  }
+
+  //send email notification to admin
+  await sendAdminInquiryEmail(dataForEmailNotification); 
 
   return {
     success: true,

@@ -1,3 +1,4 @@
+//Internal modules
 import settingErrorStatusAndMessage from "../../../shared/utils/settingErrorStatusAndMessage.js";
 import settingResponse from "../../../shared/utils/settingResponse.js";
 import {
@@ -15,7 +16,7 @@ const createDovraInquiryController = async (req, res) => {
       const validationError = settingErrorStatusAndMessage(error);
       return settingResponse(res, validationError);
     }
-
+    
     const inquiryPayload = {
       carImage: data.carImage,
       firstName: data.firstName,

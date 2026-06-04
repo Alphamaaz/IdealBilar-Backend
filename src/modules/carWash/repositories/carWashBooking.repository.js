@@ -4,6 +4,7 @@ import { createChatForInquiryRepository } from "../../chats/repositories/createC
 
 const createCarWashBookingRepository = async (bookingData, userId) => {
   const result = await CarWashBooking.create({ ...bookingData, userId });
+  await result.populate("userId", "name email")
   await notificationServices({
     name: bookingData.firstName,
     type: "Car Wash",
