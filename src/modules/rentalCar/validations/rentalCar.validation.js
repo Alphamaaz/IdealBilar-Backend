@@ -17,12 +17,14 @@ const dealerSchema = z.object({
 
 const pricingSchema = z.object({
   perDay: z.number().min(0).optional(),
+  weekend: z.number().min(0).optional(),
   perWeek: z.number().min(0).optional(),
   perMonth: z.number().min(0).optional(),
   currency: z.string().min(3).max(10).optional().default("SEK"),
 }).refine(
   (pricing) =>
     pricing.perDay !== undefined ||
+    pricing.weekend !== undefined ||
     pricing.perWeek !== undefined ||
     pricing.perMonth !== undefined,
   {

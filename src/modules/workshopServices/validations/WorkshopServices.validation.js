@@ -8,4 +8,6 @@ const createWorkshopServiceValidation = z.object({
     details: z.string().optional()
 });
 
-export { createWorkshopServiceValidation };
+const updateWorkshopServiceValidation = createWorkshopServiceValidation.partial();
+
+export { createWorkshopServiceValidation, updateWorkshopServiceValidation };

@@ -124,6 +124,7 @@ const normalizeRentalCarPayload = (rawData, files = [], isPartial = false) => {
   const hasPricingInput =
     rawData.pricing !== undefined ||
     rawData.pricePerDay !== undefined ||
+    rawData.priceWeekend !== undefined ||
     rawData.pricePerWeek !== undefined ||
     rawData.pricePerMonth !== undefined ||
     rawData.currency !== undefined;
@@ -132,6 +133,7 @@ const normalizeRentalCarPayload = (rawData, files = [], isPartial = false) => {
         parseJSONField(rawData.pricing, null) ??
         {
           perDay: parseNumberField(rawData.pricePerDay),
+          weekend: parseNumberField(rawData.priceWeekend),
           perWeek: parseNumberField(rawData.pricePerWeek),
           perMonth: parseNumberField(rawData.pricePerMonth),
           currency: rawData.currency?.trim() || "SEK",
@@ -192,6 +194,7 @@ const registerCarRentalService = async (rentalCar, files = []) => {
       thumbnail: data.thumbnail ?? data.images?.find((image) => image.isMain)?.url,
       pricing: {
         perDay: data.pricing.perDay,
+        weekend: data.pricing.weekend,
         perWeek: data.pricing.perWeek,
         perMonth: data.pricing.perMonth,
         currency: data.pricing.currency ?? "SEK",

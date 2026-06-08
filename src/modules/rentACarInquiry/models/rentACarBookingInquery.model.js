@@ -39,6 +39,26 @@ const rentACarBookingSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    weekendRent: {
+      type: Number,
+      default: 0,
+    },
+    isWeekendRateApplied: {
+      type: Boolean,
+      default: false,
+    },
+    deductibleReductionSelected: {
+      type: Boolean,
+      default: false,
+    },
+    deductibleReductionPerDay: {
+      type: Number,
+      default: 120,
+    },
+    deductibleReductionTotal: {
+      type: Number,
+      default: 0,
+    },
     
     totalRent: {
       type: Number,

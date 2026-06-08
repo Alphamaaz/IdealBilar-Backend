@@ -135,3 +135,6 @@ Thumbs.db
 /idealbilar website/**
 firebase-adminsdk.json
 .json
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat

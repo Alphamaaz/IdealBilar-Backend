@@ -10,6 +10,12 @@ const imageSchema = z.object({
 
 // date schema (fixed)
 const dateSchema = z.coerce.date();
+const booleanSchema = z.preprocess((value) => {
+  if (typeof value === "string") {
+    return value.toLowerCase() === "true";
+  }
+  return value;
+}, z.boolean());
 
 // Rent a car validation schema
 const rentACarValidationSchema = z.object({
@@ -25,6 +31,11 @@ const rentACarValidationSchema = z.object({
   
 
   perDayRent: z.coerce.number().min(0, "Per day rent must be >= 0"),
+  weekendRent: z.coerce.number().min(0, "Weekend rent must be >= 0").optional().default(0),
+  isWeekendRateApplied: booleanSchema.optional().default(false),
+  deductibleReductionSelected: booleanSchema.optional().default(false),
+  deductibleReductionPerDay: z.coerce.number().min(0).optional().default(120),
+  deductibleReductionTotal: z.coerce.number().min(0).optional().default(0),
 
   totalRent: z.coerce.number().min(0, "Total rent must be >= 0"),
 })

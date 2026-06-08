@@ -7,6 +7,10 @@ import { buyACarDataFetchingController } from '../controllers/buyACarDataFetchin
 import { adminOnlyMiddleware } from '../../../shared/middlewares/adminOnlyAuth.moddleware.js';
 import { buyACarDataDeleteFromAdminDasboard } from '../controllers/buyACarDataDelete.controller.js';
 import { updateBuyACarStatusController } from '../controllers/updateBuyACarStatus.controller.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+
 const buyACarRouter = express.Router();
 
 // buy a car endpoint/URL

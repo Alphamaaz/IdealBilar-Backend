@@ -1,5 +1,5 @@
 import { createWorkshopService, deleteWorkshopService, getAllWorkshopServices, getWorkshopServiceById, updateWorkshopService } from "../services/WorkshopServices.service.js";
-import { createWorkshopServiceValidation } from "../validations/WorkshopServices.validation.js";
+import { createWorkshopServiceValidation, updateWorkshopServiceValidation } from "../validations/WorkshopServices.validation.js";
 
 const createWorkshopController = async (req, res) => {
     try {
@@ -55,7 +55,14 @@ const getSingleWorkshopServiceController = async (req, res) => {
 
 const updateWorkshopServiceController = async (req, res) => {
     try {
-        const workshopService = await updateWorkshopService(req.params.id, req.body);
+        const validatedData = updateWorkshopServiceValidation.parse(req.body);
+        const workshopService = await updateWorkshopService(req.params.id, validatedData);
+        if (!workshopService) {
+            return res.status(404).json({
+                success: false,
+                message: "Workshop service not found"
+            });
+        }
         res.status(200).json({
             success: true,
             message: "Workshop service updated successfully",

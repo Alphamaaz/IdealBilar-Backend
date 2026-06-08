@@ -36,6 +36,7 @@ const CarSchema = new mongoose.Schema(
 
     pricing: {
       perDay: Number,
+      weekend: Number,
       perWeek: Number,
       perMonth: Number,
       currency: { type: String, default: "SEK" },

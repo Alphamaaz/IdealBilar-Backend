@@ -20,7 +20,7 @@ const saveRentACarData = async (rentACarData) => {
     try{
       const result = await RentACarBooking.create(rentACarData);
       const populatedResult = await RentACarBooking.findById(result._id)
-        .populate("userId", "name email role")
+        .populate("userId", "name email phone role")
         .populate("carId", "make model year title thumbnail ");
       await notificationServices({
         name: populatedResult.userId?.name,
