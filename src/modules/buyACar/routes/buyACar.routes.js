@@ -6,6 +6,7 @@ import { middlewareForVerifyJwtToken } from '../../../shared/middlewares/auth.mi
 import { buyACarDataFetchingController } from '../controllers/buyACarDataFetching.controller.js';
 import { adminOnlyMiddleware } from '../../../shared/middlewares/adminOnlyAuth.moddleware.js';
 import { buyACarDataDeleteFromAdminDasboard } from '../controllers/buyACarDataDelete.controller.js';
+import { updateBuyACarStatusController } from '../controllers/updateBuyACarStatus.controller.js';
 const buyACarRouter = express.Router();
 
 // buy a car endpoint/URL
@@ -16,6 +17,8 @@ buyACarRouter.get('/fetching-data-of-buy-cars', middlewareForVerifyJwtToken, adm
 
 // Delete buy a car data from admin panel
 buyACarRouter.delete('/delete-bought-cars/:carId', middlewareForVerifyJwtToken, adminOnlyMiddleware, buyACarDataDeleteFromAdminDasboard )
+
+buyACarRouter.put('/buy-a-car/:id/status', middlewareForVerifyJwtToken, adminOnlyMiddleware, updateBuyACarStatusController)
 // export
 export {
     buyACarRouter as buyACarhandler

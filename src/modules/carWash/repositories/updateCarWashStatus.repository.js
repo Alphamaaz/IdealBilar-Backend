@@ -6,8 +6,11 @@ const updateCarWashStatusRepository = async (data) => {
     try {
         const { id, status } = data;
         
-        const updatedBooking = await CarWashBooking.findByIdAndUpdate(id, { status }, { new: true });
-        console.log("Check that update the car wash booking status ", updatedBooking);
+        const updatedBooking = await CarWashBooking.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true, runValidators: true },
+        );
         
         return updatedBooking;
     } catch (error) {

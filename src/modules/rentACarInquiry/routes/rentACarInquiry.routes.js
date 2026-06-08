@@ -11,6 +11,7 @@ import { getBookedDates, checkAvailability } from "../controllers/availability.c
 import { middlewareForVerifyJwtToken } from "../../../shared/middlewares/auth.middleware.js";
 import { upload } from "../../../shared/middlewares/uploadFile.middleware.js";
 import { adminOnlyMiddleware } from "../../../shared/middlewares/adminOnlyAuth.moddleware.js";
+import { updateRentACarStatusController } from "../controllers/updateRentACarStatus.controller.js";
 
 const rentACarRouter = express.Router();
 
@@ -59,6 +60,13 @@ rentACarRouter.put(
   "/update-rent-a-car/:id",
   middlewareForVerifyJwtToken,
   rentACarEditeController,
+);
+
+rentACarRouter.put(
+  "/rent-a-car/:id/status",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  updateRentACarStatusController,
 );
 
 // Availability endpoints

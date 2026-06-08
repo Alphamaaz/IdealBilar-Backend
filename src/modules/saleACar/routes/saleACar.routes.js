@@ -6,6 +6,7 @@ import {
   deleteSaleACarInquiryController,
   getAllSaleACarInquiriesController,
 } from "../controllers/saleACar.controller.js";
+import { updateSaleACarStatusController } from "../controllers/updateSaleACarStatus.controller.js";
 import saleACarUpload from "../middlewares/saleACarUpload.middleware.js";
 
 const saleACarRouter = express.Router();
@@ -43,6 +44,13 @@ saleACarRouter.delete(
   middlewareForVerifyJwtToken,
   adminOnlyMiddleware,
   deleteSaleACarInquiryController,
+);
+
+saleACarRouter.put(
+  "/sale-a-car/:id/status",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  updateSaleACarStatusController,
 );
 
 export default saleACarRouter;

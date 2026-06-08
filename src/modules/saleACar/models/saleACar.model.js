@@ -121,7 +121,7 @@ const saleACarSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "reviewing", "contacted", "closed"],
+      enum: ["pending", "reviewing", "contacted", "completed", "closed", "cancelled"],
       default: "pending",
     },
   },

@@ -9,6 +9,7 @@ import {
   deleteDovraInquiryController,
   getAllDovraInquiriesController,
 } from "../controllers/dovraInquiry.controller.js";
+import { updateDovraInquiryStatusController } from "../controllers/updateDovraInquiryStatus.controller.js";
 
 const dovraInquiryRouter = express.Router();
 
@@ -30,6 +31,13 @@ dovraInquiryRouter.delete(
   middlewareForVerifyJwtToken,
   adminOnlyMiddleware,
   deleteDovraInquiryController,
+);
+
+dovraInquiryRouter.put(
+  "/dovra-inquiry/:id/status",
+  middlewareForVerifyJwtToken,
+  adminOnlyMiddleware,
+  updateDovraInquiryStatusController,
 );
 
 export default dovraInquiryRouter;

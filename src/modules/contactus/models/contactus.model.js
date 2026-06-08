@@ -31,6 +31,11 @@ const contactusSchema = new mongoose.Schema({
         required: true,
         trim: true,
         minlength: 20
+    },
+    status: {
+        type: String,
+        enum: ["pending", "contacted", "completed", "closed"],
+        default: "pending"
     }
 }, {
     timestamps: true

@@ -63,7 +63,7 @@ const dovraInquirySchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "contacted", "closed"],
+      enum: ["pending", "contacted", "completed", "closed", "cancelled"],
       default: "pending",
     },
     userId: {
